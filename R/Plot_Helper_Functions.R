@@ -1,13 +1,3 @@
-#' Adds label to plot
-#'
-#' @param xfrac The fraction over from the left side.
-#' @param yfrac The fraction down from the top.
-#' @param label The text to label with.
-#' @param pos Position to pass to text()
-#' @param ... Anything extra to pass to text(), e.g. cex, col.
-#'
-#' @return NULL
-#'
 #' @importFrom utils read.table
 #' @importFrom graphics par text
 #'
