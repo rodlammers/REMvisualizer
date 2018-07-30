@@ -1,6 +1,6 @@
 #' Creates a grain size distribution
 #'
-#' Creates a grain size distribution, given a set of grain sizes, $D_{50}$, and
+#' Creates a grain size distribution, given a set of grain sizes, D50, and
 #' sp.
 
 #' @param D50 Median grain size (mm).
@@ -30,15 +30,15 @@ gsd_maker <- function(D50, sp, ds, plot = TRUE){
 
 #' Calculates grain size statistic from given distribution
 #'
-#' Calculates $D_{x}$ from a grain size distribtion, where `x` is the fraction
+#' Calculates Dx from a grain size distribtion, where `x` is the fraction
 #' of the grain size distribution finer than the calculated grain size (e.g. `x
-#' = 0.5` for $D_{50}$).
+#' = 0.5` for D50).
 #'
 #' @param ps Grain size fractions
 #' @param Ds Grain sizes (mm)
-#' @param x Percetile to find (e.g. 0.5 for $D_{50}$)
+#' @param x Percetile to find (e.g. 0.5 for D50)
 #'
-#' @return Size of $D_x$
+#' @return Size of Dx
 #'
 calc_Dx <- function(ps, Ds, x){
 

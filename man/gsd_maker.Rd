@@ -19,6 +19,6 @@ gsd_maker(D50, sp, ds, plot = TRUE)
 The size fraction for each grain size.
 }
 \description{
-Creates a grain size distribution, given a set of grain sizes, $D_{50}$, and
+Creates a grain size distribution, given a set of grain sizes, D50, and
 sp.
 }

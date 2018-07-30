@@ -11,13 +11,13 @@ calc_Dx(ps, Ds, x)
 
 \item{Ds}{Grain sizes (mm)}
 
-\item{x}{Percetile to find (e.g. 0.5 for $D_{50}$)}
+\item{x}{Percetile to find (e.g. 0.5 for D50)}
 }
 \value{
-Size of $D_x$
+Size of Dx
 }
 \description{
-Calculates $D_{x}$ from a grain size distribtion, where `x` is the fraction
+Calculates Dx from a grain size distribtion, where `x` is the fraction
 of the grain size distribution finer than the calculated grain size (e.g. `x
-= 0.5` for $D_{50}$).
+= 0.5` for D50).
 }
