@@ -2258,7 +2258,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
     #loads_by_reach <- apply(sed_loads, 2, sum) / 1000 / lengths #ton/km
     #colors <- cRamp(loads_by_reach, "Reds")
     colors_legend <- cRamp_legend(7, "Reds")
-    legend_lab <- case_when(units == "kg" ~ "kg/km/yr",
+    legend_lab <- dplyr::case_when(units == "kg" ~ "kg/km/yr",
                             units == "ton" ~ "ton/km/yr",
                             units == "1000 ton" ~ "1000 ton/km/yr")
 
@@ -2312,7 +2312,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
     #loads_by_reach <- apply(sed_loads, 2, sum) / 1000 / lengths #ton/km
     #colors <- cRamp(loads_by_reach, "Reds")
     colors_legend <- cRamp_legend(7, "Reds")
-    legend_lab <- case_when(units == "kg" ~ "kg/km/yr",
+    legend_lab <- dplyr::case_when(units == "kg" ~ "kg/km/yr",
                             units == "ton" ~ "ton/km/yr",
                             units == "1000 ton" ~ "1000 ton/km/yr")
 
