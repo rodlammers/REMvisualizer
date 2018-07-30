@@ -17,7 +17,7 @@ Imports:
     plotrix (>= 3.7.2),
     purrr (>= 0.2.5),
     RColorBrewer (>= 1.1.2),
-    reshape2,
+    reshape2 (>= 1.4.3),
     stochasim,
     viridis (>= 0.5.1),
     zoo (>= 1.8.3)
