@@ -33,7 +33,7 @@ XS_areas <- function(path = ""){
 
   XS <- read.table(paste0(path, "/Output XS geometry all.txt"), header = FALSE,
                    sep= " ") %>%
-    dplyr::filter(V1 == 0 | V1 == max(V1))
+    dplyr::filter_(~ V1 == 0 | V1 == max(V1))
 
   # if (is.na(XS[1, ncol(XS)])){
   #   XS <- XS[,1:(ncol(XS) - 1)]
@@ -595,7 +595,7 @@ dz_lines <- function(path = "", type = 1){
         dz[i,] <- as.numeric((bed_z[j + n_nodes * (i - 1), 2:ncol(bed_z)] - initial))
       }
       colors <- cRamp_legend(n_xs, "viridis")
-      colors <- adjustcolor(colors, alpha = 0.7)
+      colors <- adjustcolor(colors, alpha.f = 0.7)
 
       min_dz <- min(apply(dz[,1:n_xs], 2, min, na.rm = TRUE))
       max_dz <- max(apply(dz[,1:n_xs], 2, max, na.rm = TRUE))
@@ -878,7 +878,7 @@ XS_plots <- function(path = "") {
 XS_plots2 <- function(path = "", XS = 1){
 
   output <- read.table(paste0(path, "/Output XS geometry all.txt")) %>%
-    dplyr::filter(V1 == 0 | V1 == max(V1))
+    dplyr::filter_(~ V1 == 0 | V1 == max(V1))
   n_XS <- sum(output[,1] == 0)
   par(mfrow = c(2, 1), mar = c(2.5, 3, 1, 0.5), oma = c(1, 1.1, 0, 0))
   #par(mfrow = c(3, 2), mar = c(3,3,1,1))
@@ -1362,9 +1362,9 @@ knickpoint_plot <- function(path = ""){
                     MoreArgs = list(x = x_val))
 
       x2 <- reshape2::melt(x, id.vars = "V1", value.name = "Knick_x") %>%
-        dplyr::filter(!is.na(Knick_x)) %>%
-        dplyr::arrange(V1) %>%
-        dplyr::rename("Days" = V1)
+        dplyr::filter_(~ !is.na(Knick_x)) %>%
+        dplyr::arrange_(~ V1) %>%
+        dplyr::rename_(.dots = list(Days = "V1"))
 
       migration_rate <- -round(stats::lm(Knick_x ~ I(Days/365), x2)$coefficients[2], 1)
       legend("bottomright", legend = bquote(.(migration_rate) ~ "m/yr"),
@@ -1451,7 +1451,7 @@ data_by_XS <- function(data){
 plot_omega <- function(path = "", type = 1){
 
   omega <- read.table(paste0(path, "/Output stream power.txt"), header = FALSE) %>%
-    dplyr::filter(V1 > 0)
+    dplyr::filter_(~ V1 > 0)
 
   times <- unique(omega$V1)
 
@@ -1780,7 +1780,7 @@ width_depth <- function(path = "", plot = FALSE){
   XS_output <- read.table(paste0(path, "/Output XS geometry all.txt"), header = FALSE,
                           sep= " ")
   dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE) %>%
-    dplyr::filter(V1 == 0) %>%
+    dplyr::filter_(~ V1 == 0) %>%
     dplyr::select(-dplyr::one_of("V1"))
   n_XS_reach <- apply(dx, 1, function(x){sum(x>0)})
 
@@ -2220,7 +2220,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
   xmin <- min(x, na.rm = TRUE)
   ymax <- max(y, na.rm = TRUE)
 
-  scale <- case_when(units == "kg" ~ 1,
+  scale <- dplyr::case_when(units == "kg" ~ 1,
                      units == "ton" ~ 1000,
                      units == "1000 ton" ~ 1e6)
 

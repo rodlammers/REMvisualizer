@@ -15,7 +15,7 @@
 gsd_maker <- function(D50, sp, ds, plot = TRUE){
   par(mfrow = c(1,1), mar = c(4, 4, 0.5, 0.5), oma = rep(0, 4))
   gsd <- stochasim::sim_gsd(D50 = D50, sp = sp, Map = plot)
-  cdf <- approx(gsd$size_class, gsd$cdf, xout = ds)$y
+  cdf <- stats::approx(gsd$size_class, gsd$cdf, xout = ds)$y
   cdf[which(is.na(cdf[1:3]))] <- 0
   cdf[which(is.na(cdf))] <- 1
   cdf[length(cdf)] <- 1
@@ -49,7 +49,7 @@ calc_Dx <- function(ps, Ds, x){
   Ds_log <- log2(Ds)
 
   #Find Dx in log space
-  Dx_log <- approx(cdf, Ds_log, xout = x)$y
+  Dx_log <- stats::approx(cdf, Ds_log, xout = x)$y
 
   #Reconvert to mm
   Dx <- 2 ^ Dx_log
