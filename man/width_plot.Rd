@@ -8,6 +8,8 @@ width_plot(print = FALSE, gif = FALSE, max_plots = 10, path = "",
   custom_sgn = NULL, title = NULL)
 }
 \arguments{
+\item{print}{Should the plot be printed (defaults to `FALSE`)}
+
 \item{gif}{Should a gif be created (defaults to `FALSE`)}
 
 \item{max_plots}{Maximum number of plots in gif}
@@ -20,5 +22,5 @@ is left, `1` is right)}
 \item{title}{Title to be printed on plot}
 }
 \description{
-#' @param print Should the plot be printed (defaults to `FALSE`)
+Plots changes in channel width for all cross sections in the network
 }

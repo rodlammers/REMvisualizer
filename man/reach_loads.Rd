@@ -17,7 +17,8 @@ is left, `1` is right)}
 
 \item{n_MC}{Number of Monte Carlo simulations}
 
-\item{units}{Character specifying units to be used in plot ("kg", "ton", or "1000 ton")}
+\item{units}{Character specifying units to be used in plot ("kg", "ton", or
+"1000 ton")}
 
 \item{prob}{Numeric vector of percentiles of Monte Carlo results to plot in
 addition to the median (defaults to 0.05 and 0.95)}

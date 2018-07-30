@@ -7,6 +7,10 @@
 #' @param ... Anything extra to pass to text(), e.g. cex, col.
 #'
 #' @return NULL
+#'
+#' @importFrom utils read.table
+#' @importFrom graphics par text
+#'
 add_label <- function(xfrac, yfrac, label, pos = 4, ...) {
   u <- par("usr")
   x <- u[1] + xfrac * (u[2] - u[1])
@@ -28,6 +32,8 @@ range03 <- function(x)(x-min(x))/diff(range(c(x, max(x))))
 #' @param alpha Transparency factor (defaults to `1`)
 #'
 #' @return Set of colors corresponding to each supplied value
+#'
+#' @importFrom grDevices colorRamp rgb adjustcolor
 #'
 cRamp <- function(x, palette, alpha = 1){
   #cols <- colorRamp(c("red", "gray40", "blue"))(range02(x))
@@ -85,6 +91,9 @@ cRamp_legend <- function(x, palette, alpha = 1){
 #'
 #' @return A set of eight named colors
 #'
+#' @importFrom grDevices adjustcolor
+#' @importFrom graphics par lines points text
+#'
 plot_colors <- function(alpha = 1, plot = FALSE){
   colors <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
               "#D55E00", "#CC79A7", "#999999")
@@ -108,11 +117,11 @@ plot_colors <- function(alpha = 1, plot = FALSE){
   return(colors)
 }
 
-
+#' @importFrom graphics par rect
 gradient.rect<-function(xleft,ybottom,xright,ytop,reds,greens,blues,
                         col=NULL,nslices=50,gradient="x",border=par("fg")) {
 
-  if(is.null(col)) col<-color.gradient(reds, greens, blues, nslices)
+  if(is.null(col)) col <- plotrix::color.gradient(reds, greens, blues, nslices)
   else nslices<-length(col)
   nrect<-max(unlist(lapply(list(xleft,ybottom,xright,ytop),length)))
   if(nrect > 1) {
@@ -143,6 +152,8 @@ gradient.rect<-function(xleft,ybottom,xright,ytop,reds,greens,blues,
   invisible(col)
 }
 
+#' @importFrom graphics par strheight strwidth text
+#'
 color.legend<-function (xl,yb,xr,yt,legend,rect.col,cex=1,align="lt",
                         gradient="x",...) {
 

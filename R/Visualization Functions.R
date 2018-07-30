@@ -24,11 +24,16 @@
 #'   change in sediment inflow and outflow and total channel change\cr Percent
 #'   Diff \tab Calculated volume difference as a percentage of Volume sum\cr }
 #'
+#' @importFrom utils read.table
+#' @importFrom dplyr %>%
+#' @importFrom graphics par plot points abline
+#' @export
+#'
 XS_areas <- function(path = ""){
 
   XS <- read.table(paste0(path, "/Output XS geometry all.txt"), header = FALSE,
                    sep= " ") %>%
-    filter(V1 == 0 | V1 == max(V1))
+    dplyr::filter(V1 == 0 | V1 == max(V1))
 
   # if (is.na(XS[1, ncol(XS)])){
   #   XS <- XS[,1:(ncol(XS) - 1)]
@@ -228,6 +233,12 @@ make_network <- function(n_nodes, n_xs, link, dx, custom_sgn){
 #'   is left, `1` is right)
 #' @param title Title to be printed on plot
 #'
+#' @importFrom utils read.table
+#' @importFrom grDevices png dev.off
+#' @importFrom graphics par plot rect points legend mtext grconvertX grconvertY text
+#'
+#' @export
+#'
 dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
                     path = "", custom_sgn = NULL,
                     title = NULL){
@@ -371,13 +382,19 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 
 #' Plots changes in channel width for all cross sections in the network
 #'
-#' #' @param print Should the plot be printed (defaults to `FALSE`)
+#' @param print Should the plot be printed (defaults to `FALSE`)
 #' @param gif Should a gif be created (defaults to `FALSE`)
 #' @param max_plots Maximum number of plots in gif
 #' @param path Path to folder with model outputs
 #' @param custom_sgn Specifies the direction each reach should be plotted (`-1`
 #'   is left, `1` is right)
 #' @param title Title to be printed on plot
+#'
+#' @importFrom utils read.table
+#' @importFrom grDevices png dev.off
+#' @importFrom graphics par plot rect points legend mtext grconvertX grconvertY text
+#'
+#' @export
 #'
 width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
                        path = "", custom_sgn = NULL,
@@ -532,6 +549,12 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 #' @param type `type = 1` plots all lines on same plot, `type = 2` creates a
 #'   separate plot for each reach
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines text grconvertX grconvertY
+#' @importFrom grDevices adjustcolor
+#'
+#' @export
+#'
 dz_lines <- function(path = "", type = 1){
   bed_z <- read.table(paste0(path, "/Output z.txt"), header = FALSE, sep = "\t")
 
@@ -603,6 +626,12 @@ dz_lines <- function(path = "", type = 1){
 #' @param path Path to folder with model outputs
 #' @param type `type = 1` plots all lines on same plot, `type = 2` creates a
 #'   separate plot for each reach
+#'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines points text
+#' @importFrom grDevices rgb
+#'
+#' @export
 #'
 profiles <- function(path = "", type = 1){
   bed_z <- read.table(paste0(path, "/Output z.txt"), header = FALSE, sep = "\t")
@@ -683,6 +712,8 @@ profiles <- function(path = "", type = 1){
 #' @param path Path to folder with model outputs
 #' @param print Should the plot be printed to a file (defaults to `FALSE`)
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines mtext grconvertX grconvertY
 width_lines <- function(path = "", print = FALSE){
   width <- read.table(paste0(path, "/Output width.txt"), header = FALSE)
 
@@ -743,6 +774,11 @@ width_lines <- function(path = "", print = FALSE){
 #'
 #' @param path Path to folder with model outputs
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines mtext grconvertX grconvertY
+#'
+#' @export
+#'
 slope_lines <- function(path = ""){
   slope <- read.table(paste0(path, "/Output slope.txt"), header = FALSE)
   times <- unique(slope$V1)
@@ -780,6 +816,12 @@ slope_lines <- function(path = ""){
 #' section in each reach
 #'
 #' @param path Path to folder with model outputs
+#'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines points mtext
+#' @importFrom grDevices rgb
+#'
+#' @export
 #'
 XS_plots <- function(path = "") {
 
@@ -827,10 +869,16 @@ XS_plots <- function(path = "") {
 #' @param path Path to folder with model outputs
 #' @param XS A numeric vector of the cross sections to be plotted
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines points mtext
+#' @importFrom grDevices rgb adjustcolor
+#' @importFrom dplyr %>%
+#'
+#' @export
 XS_plots2 <- function(path = "", XS = 1){
 
   output <- read.table(paste0(path, "/Output XS geometry all.txt")) %>%
-    filter(V1 == 0 | V1 == max(V1))
+    dplyr::filter(V1 == 0 | V1 == max(V1))
   n_XS <- sum(output[,1] == 0)
   par(mfrow = c(2, 1), mar = c(2.5, 3, 1, 0.5), oma = c(1, 1.1, 0, 0))
   #par(mfrow = c(3, 2), mar = c(3,3,1,1))
@@ -877,6 +925,11 @@ XS_plots2 <- function(path = "", XS = 1){
 #' @param ts The time step (in seconds) between plottings
 #' @param print Should the plot be printed to a file (defaults to `FALSE`)
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines points grconvertX grconvertY
+#' @importFrom grDevices rgb png dev.off
+#'
+#' @export
 XS_plots3 <- function(path = "", XS = 1, n_plots = 0, ts = 0.2, print = FALSE){
   output <- read.table(paste0(path, "/Output XS geometry.txt"))
   n_XS <- sum(output[,1] == 0)
@@ -968,6 +1021,12 @@ XS_plots3 <- function(path = "", XS = 1, n_plots = 0, ts = 0.2, print = FALSE){
 #'
 #' @param path Path to folder with model outputs
 #'
+#' @importFrom utils read.table
+#' @importFrom grDevices adjustcolor
+#' @importFrom graphics par plot lines grconvertX grconvertY
+#'
+#' @export
+#'
 sinuosity_plot <- function(path = ""){
   sinuosity <- read.table(paste0(path, "/Output sinuosity.txt"), header = FALSE)
 
@@ -1000,6 +1059,11 @@ sinuosity_plot <- function(path = ""){
 #' Plots changes in bend radius of curvature over time for all cross sections
 #'
 #' @param path Path to folder with model outputs
+#'
+#' @importFrom graphics par plot lines mtext grconvertX grconvertY
+#' @importFrom utils read.table
+#'
+#' @export
 #'
 Rc_lines <- function(path = ""){
   Rc <- read.table(paste0(path, "/Output Rc.txt"), header = FALSE)
@@ -1041,6 +1105,12 @@ Rc_lines <- function(path = ""){
 #' Plots changes in bed median grain size over time for all cross sections
 #'
 #' @param path Path to folder with model outputs
+#'
+#' @importFrom grDevices adjustcolor
+#' @importFrom graphics par plot lines
+#' @importFrom utils read.table
+#'
+#' @export
 #'
 D50_plot <- function(path = ""){
   D50 <- read.table(paste0(path, "/Output D50.txt"), header = FALSE, sep = "\t")
@@ -1102,138 +1172,145 @@ D50_plot <- function(path = ""){
 }
 
 
-bank_loading <- function(path = "", start_year = 0,
-                         n_MC = 0,
-                         MC_path = ""){
-  bank_loads <- read.table(paste0(path, "/Output bank loading.txt"), header = TRUE)
-
-  #find number of days
-  days <- 1:nrow(bank_loads)
-  n_days <- length(days)
-
-  p_loads <- bank_loads[,which(substr(colnames(bank_loads), 1, 1) == "P")]
-  sed_loads <- bank_loads[,which(substr(colnames(bank_loads), 1, 3) == "Sed")]
-
-  years <- ceiling(days / 365) + start_year
-
-  p_loads <- apply(p_loads, 1, sum)
-  sed_loads <- apply(sed_loads, 1, sum)
-
-  combined <- data.frame(p_loads, sed_loads, years)
-
-  combined <- combined %>%
-    group_by(years) %>%
-    summarize(annual_P = sum(p_loads),
-              annual_sed = sum(sed_loads),
-              n = n()) %>%
-    filter(n > 300)
-
-  # stats <- combined %>%
-  #   summarize(mean_P = mean(annual_P),
-  #             mean_sed = mean(annual_sed))
-
-  if (n_MC > 0){
-    MC_loading <- list()
-    for (i in 0:(n_MC - 1)){
-      MC_loading[[i + 1]] <- read.table(paste0(MC_path,
-                                               "/MC Outputs/Output bank loading", i, ".txt"),
-                                        sep = "\t", header = TRUE)
-    }
-    MC_P <- lapply(MC_loading, function(x, years){
-      sub <- x[,which(substr(colnames(x), 1, 1) == "P")]
-      p_day <- apply(sub, 1, sum)
-      comb <- data.frame(p_day, years) %>%
-        group_by(years) %>%
-        summarise(p_load = sum(p_day),
-                  n_days = n()) %>%
-        filter(n_days > 300)
-      return(comb$p_load)
-    }, years)
-    MC_P <- do.call("rbind", MC_P)
-    MC_sed <- lapply(MC_loading, function(x, years){
-      sub <- x[,which(substr(colnames(x), 1, 3) == "Sed")]
-      sed_day <- apply(sub, 1, sum)
-      comb <- data.frame(sed_day, years) %>%
-        group_by(years) %>%
-        summarise(sed_load = sum(sed_day),
-                  n_days = n()) %>%
-        filter(n_days > 300)
-      return(comb$sed_load)
-    }, years)
-    MC_sed <- do.call("rbind", MC_sed)
-
-    P_med <- apply(MC_P, 2, median)
-    P_05 <- apply(MC_P, 2, quantile, probs = 0.05)
-    P_95 <- apply(MC_P, 2, quantile, probs = 0.95)
-
-    sed_med <- apply(MC_sed, 2, median)
-    sed_05 <- apply(MC_sed, 2, quantile, probs = 0.05)
-    sed_95 <- apply(MC_sed, 2, quantile, probs = 0.95)
-
-    # MC_stats <- data.frame(mean_pmed = mean(P_med),
-    #                        mean_p05 = mean(P_05),
-    #                        mean_p95 = mean(P_95),
-    #                        mean_sed = mean(sed_med),
-    #                        mean_sed05 = mean(sed_05),
-    #                        mean_sed95 = mean(sed_95))
-    #
-    # stats <- cbind(stats, MC_stats)
-  }
-
-  colors <- RColorBrewer::brewer.pal(5, "PuOr")
-  png(paste0(path, "/Loading plot.png"), type = "cairo", units = "in",
-      height = 4.5, width = 6.5, res = 500)
-  par(mfrow = c(2, 1), mar = c(2, 4.5, 0, 0.5), oma = c(1.5, 0, 1.5, 0),
-      mgp = c(2.5, 0.7, 0))
-  ylim <- c(0, max(combined$annual_P))
-  if (n_MC > 0){
-    ylim <- c(0, max(P_95))
-  }
-  plot(annual_P ~ years, combined, type = "n", ylab = "Annual P\nLoading [kg]",
-       las = 1, xlab = "", xpd = NA,
-       ylim = ylim)
-  if (n_MC > 0){
-    polygon(c(combined$years, rev(combined$years)), c(P_05, rev(P_95)),
-            col = colors[2], border = NA)
-    lines(combined$years, P_med, col = colors[1], lty = 2, lwd = 2)
-  }
-  lines(annual_P ~ years, combined, col = colors[1], lwd = 2)
-  if (n_MC > 0){
-    legend("top", legend = c("Single Run", "MC Median", "90% CI"),
-           pch = c(NA, NA, 15), pt.cex = 1.5,
-           lwd = c(2, 2, NA), lty = c(1, 2, NA),
-           col = c(rep(colors[1], 2), colors[2]),
-           bty = "n", horiz = TRUE, inset = c(0, -0.23), xpd = NA)
-  }
-
-  ylim <- c(0, max(combined$annual_sed / 1000))
-  if (n_MC > 0){
-    ylim <- c(0, max(sed_95 / 1000))
-  }
-  plot(I(annual_sed / 1000) ~ years, combined, type = "n",
-       ylab = "Annual Sed\nLoading [tons]", xlab = "Year", xpd = NA,
-       las = 1, ylim = ylim)
-  if (n_MC > 0){
-    polygon(c(combined$years, rev(combined$years)), c(sed_05 / 1000,
-                                                      rev(sed_95) / 1000),
-            col = colors[4], border = NA)
-    lines(combined$years, sed_med / 1000, col = colors[5], lty = 2, lwd = 2)
-  }
-  lines(I(annual_sed / 1000) ~ years, combined, lwd = 2, col = colors[5])
-  dev.off()
-
-  if(n_MC == 0){
-    return(combined)
-  }else{
-    return(list(modeled = combined, MC_P = MC_P, MC_sed = MC_sed))
-  }
-}
-
+# bank_loading <- function(path = "", start_year = 0,
+#                          n_MC = 0,
+#                          MC_path = ""){
+#   bank_loads <- read.table(paste0(path, "/Output bank loading.txt"), header = TRUE)
+#
+#   #find number of days
+#   days <- 1:nrow(bank_loads)
+#   n_days <- length(days)
+#
+#   p_loads <- bank_loads[,which(substr(colnames(bank_loads), 1, 1) == "P")]
+#   sed_loads <- bank_loads[,which(substr(colnames(bank_loads), 1, 3) == "Sed")]
+#
+#   years <- ceiling(days / 365) + start_year
+#
+#   p_loads <- apply(p_loads, 1, sum)
+#   sed_loads <- apply(sed_loads, 1, sum)
+#
+#   combined <- data.frame(p_loads, sed_loads, years)
+#
+#   combined <- combined %>%
+#     group_by(years) %>%
+#     summarize(annual_P = sum(p_loads),
+#               annual_sed = sum(sed_loads),
+#               n = n()) %>%
+#     filter(n > 300)
+#
+#   # stats <- combined %>%
+#   #   summarize(mean_P = mean(annual_P),
+#   #             mean_sed = mean(annual_sed))
+#
+#   if (n_MC > 0){
+#     MC_loading <- list()
+#     for (i in 0:(n_MC - 1)){
+#       MC_loading[[i + 1]] <- read.table(paste0(MC_path,
+#                                                "/MC Outputs/Output bank loading", i, ".txt"),
+#                                         sep = "\t", header = TRUE)
+#     }
+#     MC_P <- lapply(MC_loading, function(x, years){
+#       sub <- x[,which(substr(colnames(x), 1, 1) == "P")]
+#       p_day <- apply(sub, 1, sum)
+#       comb <- data.frame(p_day, years) %>%
+#         group_by(years) %>%
+#         summarise(p_load = sum(p_day),
+#                   n_days = n()) %>%
+#         filter(n_days > 300)
+#       return(comb$p_load)
+#     }, years)
+#     MC_P <- do.call("rbind", MC_P)
+#     MC_sed <- lapply(MC_loading, function(x, years){
+#       sub <- x[,which(substr(colnames(x), 1, 3) == "Sed")]
+#       sed_day <- apply(sub, 1, sum)
+#       comb <- data.frame(sed_day, years) %>%
+#         group_by(years) %>%
+#         summarise(sed_load = sum(sed_day),
+#                   n_days = n()) %>%
+#         filter(n_days > 300)
+#       return(comb$sed_load)
+#     }, years)
+#     MC_sed <- do.call("rbind", MC_sed)
+#
+#     P_med <- apply(MC_P, 2, median)
+#     P_05 <- apply(MC_P, 2, quantile, probs = 0.05)
+#     P_95 <- apply(MC_P, 2, quantile, probs = 0.95)
+#
+#     sed_med <- apply(MC_sed, 2, median)
+#     sed_05 <- apply(MC_sed, 2, quantile, probs = 0.05)
+#     sed_95 <- apply(MC_sed, 2, quantile, probs = 0.95)
+#
+#     # MC_stats <- data.frame(mean_pmed = mean(P_med),
+#     #                        mean_p05 = mean(P_05),
+#     #                        mean_p95 = mean(P_95),
+#     #                        mean_sed = mean(sed_med),
+#     #                        mean_sed05 = mean(sed_05),
+#     #                        mean_sed95 = mean(sed_95))
+#     #
+#     # stats <- cbind(stats, MC_stats)
+#   }
+#
+#   colors <- RColorBrewer::brewer.pal(5, "PuOr")
+#   png(paste0(path, "/Loading plot.png"), type = "cairo", units = "in",
+#       height = 4.5, width = 6.5, res = 500)
+#   par(mfrow = c(2, 1), mar = c(2, 4.5, 0, 0.5), oma = c(1.5, 0, 1.5, 0),
+#       mgp = c(2.5, 0.7, 0))
+#   ylim <- c(0, max(combined$annual_P))
+#   if (n_MC > 0){
+#     ylim <- c(0, max(P_95))
+#   }
+#   plot(annual_P ~ years, combined, type = "n", ylab = "Annual P\nLoading [kg]",
+#        las = 1, xlab = "", xpd = NA,
+#        ylim = ylim)
+#   if (n_MC > 0){
+#     polygon(c(combined$years, rev(combined$years)), c(P_05, rev(P_95)),
+#             col = colors[2], border = NA)
+#     lines(combined$years, P_med, col = colors[1], lty = 2, lwd = 2)
+#   }
+#   lines(annual_P ~ years, combined, col = colors[1], lwd = 2)
+#   if (n_MC > 0){
+#     legend("top", legend = c("Single Run", "MC Median", "90% CI"),
+#            pch = c(NA, NA, 15), pt.cex = 1.5,
+#            lwd = c(2, 2, NA), lty = c(1, 2, NA),
+#            col = c(rep(colors[1], 2), colors[2]),
+#            bty = "n", horiz = TRUE, inset = c(0, -0.23), xpd = NA)
+#   }
+#
+#   ylim <- c(0, max(combined$annual_sed / 1000))
+#   if (n_MC > 0){
+#     ylim <- c(0, max(sed_95 / 1000))
+#   }
+#   plot(I(annual_sed / 1000) ~ years, combined, type = "n",
+#        ylab = "Annual Sed\nLoading [tons]", xlab = "Year", xpd = NA,
+#        las = 1, ylim = ylim)
+#   if (n_MC > 0){
+#     polygon(c(combined$years, rev(combined$years)), c(sed_05 / 1000,
+#                                                       rev(sed_95) / 1000),
+#             col = colors[4], border = NA)
+#     lines(combined$years, sed_med / 1000, col = colors[5], lty = 2, lwd = 2)
+#   }
+#   lines(I(annual_sed / 1000) ~ years, combined, lwd = 2, col = colors[5])
+#   dev.off()
+#
+#   if(n_MC == 0){
+#     return(combined)
+#   }else{
+#     return(list(modeled = combined, MC_P = MC_P, MC_sed = MC_sed))
+#   }
+# }
+#
 
 
 #' Plots knickpoint location over time
 #'
 #' @param path Path to folder with model outputs
+#'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot mtext legend points
+#' @importFrom dplyr %>%
+#'
+#' @export
+#'
 knickpoint_plot <- function(path = ""){
 
   knick_x <- read.table(paste0(path, "/Output knick locations.txt"),
@@ -1285,11 +1362,11 @@ knickpoint_plot <- function(path = ""){
                     MoreArgs = list(x = x_val))
 
       x2 <- reshape2::melt(x, id.vars = "V1", value.name = "Knick_x") %>%
-        filter(!is.na(Knick_x)) %>%
-        arrange(V1) %>%
-        rename("Days" = V1)
+        dplyr::filter(!is.na(Knick_x)) %>%
+        dplyr::arrange(V1) %>%
+        dplyr::rename("Days" = V1)
 
-      migration_rate <- -round(lm(Knick_x ~ I(Days/365), x2)$coefficients[2], 1)
+      migration_rate <- -round(stats::lm(Knick_x ~ I(Days/365), x2)$coefficients[2], 1)
       legend("bottomright", legend = bquote(.(migration_rate) ~ "m/yr"),
              pch = NA, bty = "n")
     }
@@ -1305,6 +1382,10 @@ knickpoint_plot <- function(path = ""){
 #' @param plot Should channel width be plotted (defaults to `FALSE`)
 #'
 #' @return A list of average channel widths by reach
+#'
+#' @importFrom utils read.table
+#' @importFrom graphics lines
+#'
 avg_widths <- function(path = "", plot = FALSE){
 
   XS_output <- read.table(paste0(path, "/Output XS geometry.txt"))
@@ -1330,7 +1411,7 @@ avg_widths <- function(path = "", plot = FALSE){
          ylab = "Average Width [m]")
     for(i in 1:length(TW)){
       lines(times / 365, TW[[i]])
-      fit <- lm(log(TW[[i]][2:length(times)]) ~ log(times[2:length(times)] / 365))
+      fit <- stats::lm(log(TW[[i]][2:length(times)]) ~ log(times[2:length(times)] / 365))
       lines(times[2:length(times)] / 365, exp(fit$fitted.values), lty = 2)
     }
   }else{
@@ -1361,10 +1442,16 @@ data_by_XS <- function(data){
 #' @param type `type = 1` plots stream power over time for each reach
 #'   separately; `type = 2` plots stream power longitudinally by reach
 #'
+#' @importFrom dplyr %>%
+#' @importFrom utils read.table
+#' @importFrom graphics par plot grconvertY grconvertX lines points mtext
+#'
+#' @export
+#'
 plot_omega <- function(path = "", type = 1){
 
   omega <- read.table(paste0(path, "/Output stream power.txt"), header = FALSE) %>%
-    filter(V1 > 0)
+    dplyr::filter(V1 > 0)
 
   times <- unique(omega$V1)
 
@@ -1424,6 +1511,12 @@ plot_omega <- function(path = "", type = 1){
 #' @param pos Position of labels for cross sections (`right` or `left`)
 #' @param years A numeric vectors of years of the simulation to plot
 #' @param print Should the plot be printed to a file (defaults to `FALSE`)
+#'
+#' @importFrom utils read.table
+#' @importFrom grDevices png dev.off
+#' @importFrom graphics par plot rect points arrows text legend
+#'
+#' @export
 #'
 network_XS_plot <- function(path = "", XS = NULL,
                             pos = c("right", "right"),
@@ -1679,13 +1772,16 @@ network_XS_plot <- function(path = "", XS = NULL,
 #'
 #' @return A dataframe with width-depth ratio by reach
 #'
+#' @importFrom utils read.table
+#' @importFrom dplyr %>%
+#' @importFrom graphics par lines mtext grconvertX grconvertY
 width_depth <- function(path = "", plot = FALSE){
 
   XS_output <- read.table(paste0(path, "/Output XS geometry all.txt"), header = FALSE,
                           sep= " ")
   dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE) %>%
-    filter(V1 == 0) %>%
-    select(-one_of("V1"))
+    dplyr::filter(V1 == 0) %>%
+    dplyr::select(-dplyr::one_of("V1"))
   n_XS_reach <- apply(dx, 1, function(x){sum(x>0)})
 
   #Get average channel width
@@ -1753,6 +1849,11 @@ width_depth <- function(path = "", plot = FALSE){
 #'
 #' @param path Path to folder with model outputs
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines legend
+#'
+#' @export
+#'
 sed_lines <- function(path = ""){
   sed <- read.table(paste0(path, "/Output sediment vol.txt"), header = TRUE)
 
@@ -1780,6 +1881,13 @@ sed_lines <- function(path = ""){
 #'   is left, `1` is right)
 #' @param prob Numeric vector of percentiles of Monte Carlo results to plot in
 #'   addition to the median (defaults to 0.05 and 0.95)
+#'
+#' @importFrom utils read.table
+#' @importFrom stats quantile median
+#' @importFrom grDevices png dev.off
+#' @importFrom graphics par plot rect points legend grconvertX grconvertY text mtext
+#'
+#' @export
 #'
 width_MC_plot <- function(print = FALSE, n_MC, path = "",
                           MC_path = NULL, custom_sgn = NULL, prob = c(0.05, 0.95)){
@@ -1924,6 +2032,13 @@ width_MC_plot <- function(print = FALSE, n_MC, path = "",
 #' @param prob Numeric vector of percentiles of Monte Carlo results to plot in
 #'   addition to the median (defaults to 0.05 and 0.95)
 #'
+#' @importFrom utils read.table
+#' @importFrom stats quantile median
+#' @importFrom graphics par plot rect points legend grconvertX grconvertY text mtext
+#' @importFrom grDevices png dev.off
+#'
+#' @export
+#'
 dz_MC_plot <- function(print = FALSE, n_MC, path = "",
                        MC_path = NULL, custom_sgn = NULL, prob = c(0.05, 0.95)){
   link <- read.table(paste0(path, "/Input link.txt"), header = FALSE, sep = " ")
@@ -2067,10 +2182,19 @@ dz_MC_plot <- function(print = FALSE, n_MC, path = "",
 #'   is left, `1` is right)
 #' @param MC_path Path to "MC Outputs" folder (only if different than `path`)
 #' @param n_MC Number of Monte Carlo simulations
-#' @param units Character specifying units to be used in plot ("kg", "ton", or "1000 ton")
+#' @param units Character specifying units to be used in plot ("kg", "ton", or
+#'   "1000 ton")
 #' @param prob Numeric vector of percentiles of Monte Carlo results to plot in
 #'   addition to the median (defaults to 0.05 and 0.95)
 #' @param print Should the plot be printed to a file (defaults to `FALSE`)
+#'
+#' @importFrom utils read.table
+#' @importFrom stats quantile median
+#' @importFrom grDevices png dev.off
+#' @importFrom graphics par plot rect lines legend grconvertX grconvertY points
+#'   text mtext
+#'
+#' @export
 #'
 reach_loads <- function(path = "", custom_sgn = NULL,
                         MC_path = NULL, n_MC = 0, units = "ton", prob = c(0.05, 0.95),
@@ -2235,6 +2359,11 @@ reach_loads <- function(path = "", custom_sgn = NULL,
 #' @param path Path to folder with model outputs
 #' @param type `type = 1` plots cumulative loads, `type = 2` plots daily loads
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot lines grconvertX grconvertY
+#'
+#' @export
+#'
 pollutant_loading <- function(path = "", type = 1){
 
   loads <- read.table(file.path(path, "Output bank loading.txt"), header = TRUE)
@@ -2248,11 +2377,11 @@ pollutant_loading <- function(path = "", type = 1){
   max_P <- sum(total_P)
 
   get_scales <- function(max){
-    scale <- case_when(log10(max) < 3 ~ 1,
+    scale <- dplyr::case_when(log10(max) < 3 ~ 1,
                        log10(max) < 6 ~ 1000,
                        log10(max) < 9 ~ 1e6,
                        log10(max) < 12 ~ 1e9)
-    units <- case_when(log10(max) < 3 ~ "kg",
+    units <- dplyr::case_when(log10(max) < 3 ~ "kg",
                        log10(max) < 6 ~ "Mg",
                        log10(max) < 9 ~ "Gg",
                        log10(max) < 12 ~ "Tg")
