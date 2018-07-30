@@ -1,0 +1,20 @@
+Package: REMvisualizer
+Type: Package
+Title: Visualizations for Analyzing Output from the River Erosion Model (REM)
+Version: 0.1.0
+Author: person("Rod", "Lammers", email = "rodlammers@gmail.com", role = c("aut", "cre")
+Maintainer: Rod Lammers <rodlammers@gmail.com>
+Description: Provides a series of functions to visualize and post-process
+    output from the River Erosion Model (REM).
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+Imports:
+    colorspace,
+    dplyr,
+    purrr,
+    RColorBrewer,
+    zoo 
+RoxygenNote: 6.0.1
+URL: https://github.com/rodlammers/REMvisualizer
+BugReports: https://github.com/rodlammers/REMvisualizer/issues
