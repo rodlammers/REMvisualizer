@@ -399,15 +399,10 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
                        path = "", custom_sgn = NULL,
                        title = NULL){
-  width <- read.table(paste0(path, "/Output width.txt"), header = FALSE, sep = "\t")
+  width <- read.table(paste0(path, "/Output width.txt"), header = FALSE)
   link <- read.table(paste0(path, "/Input link.txt"), header = FALSE, sep = " ")
-  #L <- read.table("Input length.txt", header = FALSE, sep = " ")
 
-  #L <- as.array(L[,1])
   dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE, sep = "\t")
-
-  #remove last 2 bed_z column
-  width <- width[,1:(ncol(width) - 2)]
 
   times <- unique(width[,1])
   n_nodes <- ncol(link)
@@ -634,10 +629,9 @@ dz_lines <- function(path = "", type = 1){
 #' @export
 #'
 profiles <- function(path = "", type = 1){
-  bed_z <- read.table(paste0(path, "/Output z.txt"), header = FALSE, sep = "\t")
+  bed_z <- read.table(paste0(path, "/Output z.txt"), header = FALSE)
 
-  #remove last bed_z column and change 0 values to NA
-  bed_z <- bed_z[,1:(ncol(bed_z) - 1)]
+  #Change 0 values to NA
   bed_z[bed_z == 0] <- NA
   bed_z$V1[is.na(bed_z$V1)] <- 0
 
@@ -645,8 +639,7 @@ profiles <- function(path = "", type = 1){
   n_nodes <- sum(bed_z$V1 == 0)
 
   #Get dx
-  dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE, sep = "\t")
-  dx <- dx[,-ncol(dx)]
+  dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE)
   max_dx <- max(apply(dx[, 2:ncol(dx)], 2, max, na.rm = TRUE))
   xs <- 0:(ncol(bed_z) - 2)
   x_max <- max_dx * max(xs)
@@ -677,7 +670,7 @@ profiles <- function(path = "", type = 1){
     }
   }else{
     #n_plots <- ceiling(n_nodes / 6)
-    par(mfrow = c(3, 2), mar = c(2, 2, 1, 0.5))
+    par(mfrow = c(1, 2), mar = c(2, 2, 1, 0.5), oma = c(2, 2, 0, 0), mgp = c(2, 0.7, 0))
     for (i in 1:n_nodes){
       x <- cumsum(c(1, as.numeric(dx[i, 2:ncol(dx)])))
       x <- x[1:(length(x) - 1)]
@@ -700,6 +693,10 @@ profiles <- function(path = "", type = 1){
       points(x, bed_z[nrow(bed_z) - n_nodes + i, 2:ncol(bed_z)],
              pch = 21, bg = rgb(1, 0, 0, 0.5))
 
+      if (i %% 2 == 0){
+        mtext("Distance [m]", side = 1, outer = TRUE, line = 0.5)
+        mtext("Elevation [m]", side = 2, outer = TRUE, line = 0.5)
+      }
       #text(0.7, bed_z$V2[i], labels = i, pos = 2, xpd = NA)
     }
   }
@@ -714,6 +711,9 @@ profiles <- function(path = "", type = 1){
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines mtext grconvertX grconvertY
+#'
+#' @export
+#'
 width_lines <- function(path = "", print = FALSE){
   width <- read.table(paste0(path, "/Output width.txt"), header = FALSE)
 
