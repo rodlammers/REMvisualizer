@@ -10,7 +10,8 @@ dz_plot(print = FALSE, gif = FALSE, max_plots = 10, path = "",
 \arguments{
 \item{print}{Should the plot be printed (defaults to `FALSE`)}
 
-\item{gif}{Should a gif be created (defaults to `FALSE`)}
+\item{gif}{Should a gif be created (defaults to `FALSE`). Must have
+ImageMagick installed and a folder titled "Figs" in the `path` directory.}
 
 \item{max_plots}{Maximum number of plots in gif}
 

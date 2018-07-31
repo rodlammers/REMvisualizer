@@ -226,7 +226,8 @@ make_network <- function(n_nodes, n_xs, link, dx, custom_sgn){
 #' Plots changes in bed elevation for each cross section in the network
 #'
 #' @param print Should the plot be printed (defaults to `FALSE`)
-#' @param gif Should a gif be created (defaults to `FALSE`)
+#' @param gif Should a gif be created (defaults to `FALSE`). Must have
+#'   ImageMagick installed and a folder titled "Figs" in the `path` directory.
 #' @param max_plots Maximum number of plots in gif
 #' @param path Path to folder with model outputs
 #' @param custom_sgn Specifies the direction each reach should be plotted (`-1`
@@ -251,6 +252,7 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 
 
   times <- unique(bed_z[,1])
+  times <- times[-length(times)]
   n_nodes <- ncol(link)
   n_xs <- apply(bed_z[1:n_nodes,2:ncol(bed_z)], 1, function(x){sum(x > 0)})
 
@@ -263,34 +265,37 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
   ymax <- max(y)
 
   if (gif){
+    if (substr(path, 1, 1) == "~"){stop("Please supply full path, no ~ allowed.")}
     #Get times where we are going to make plots
-    factors <- (length(times) + 1:1000) / (2:1001)
-    n_plots <- max(factors[factors/floor(factors) == 1 & factors <= max_plots])
-    if (length(n_plots) == 0) {stop("Try increasing the max number of plots.")}
-    times_plot <- seq(0, max(times), length.out = n_plots)
+    # max_round <- max(times[times %% 365 == 0])
+    # factors <- (length(times) + 1:1000) / (2:1001)
+    # n_plots <- max(factors[factors/floor(factors) == 1 & factors <= max_plots])
+    #if (length(n_plots) == 0) {stop("Try increasing the max number of plots.")}
+    times_plot <- seq(0, max(times), length.out = max_plots)
 
     #Get total bed elevation change
     dz_tot <- bed_z[bed_z[,1] == max(times),2:ncol(bed_z)] -
       bed_z[bed_z[,1] == 0,2:ncol(bed_z)]
     max_dz <- max(abs(dz_tot))
 
-    legend_cols <- cRamp_legend(7, "RdYlBu")
+    legend_cols <- cRamp_legend(7, "RdBu")
 
-    png(paste0(path, "/Figs/dz Network %02d.png"), type = "cairo", units = "in", height = 5, width = 5, res = 500)
+    png(paste0(path, "/Figs/dz Network %02d.png"), type = "cairo", units = "in", height = 4.5, width = 4, res = 500)
 
-    for (k in 1:n_plots){
+    for (k in 1:length(times_plot)){
       #calculated bed elevation changes
-      dz <- bed_z[bed_z[,1] == times_plot[k],2:ncol(bed_z)] -
+      time_round <- times[which(abs(times - times_plot[k]) == min(abs(times - times_plot[k])))]
+      dz <- bed_z[bed_z[,1] == time_round,2:ncol(bed_z)] -
         bed_z[bed_z[,1] == min(times_plot),2:ncol(bed_z)]
 
       #Convert dz to vector to get colors - add maximum dz to get right scale
       dz_vector <- c(as.vector(t(dz)), max_dz, -max_dz)
-      colors <- cRamp(dz_vector, "RdYlBu")
+      colors <- cRamp(dz_vector, "RdBu")
 
       #Convert colors back to matrix - removing max dz value
       colors <- matrix(colors[1:(length(colors) - 2)], nrow = n_nodes, byrow = TRUE)
 
-      par(mar = c(1, 1, 1, 1), mfrow = c(1,1))
+      par(mar = c(0.5, 0.5, 4, 0.5), mfrow = c(1,1))
       plot(NA, xlim = c(xmin, xmax * 1.05), ylim = c(0, ymax), yaxt = "n", xaxt = "n", xlab = "", ylab = "")
       rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "gray40")
 
@@ -310,14 +315,21 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
         #text(xy[i, 1], xy[i, 2], i, pos = 4)
       }
 
-      legend("topleft", legend = round(seq(-max_dz, max_dz, length.out = 7), 2),
-             fill = legend_cols, bty = "n", title = "Elevation Change [m]",
-             text.col = "white")
-      legend("bottomright", legend = paste(round(times_plot[k] / 365, 1), "Years"),
+      legend("bottomright", legend = paste(round(time_round / 365, 1), "Years"),
              pch = NA, bty = "n", text.col = "white", cex = 1.3)
+
+      xval <- grconvertX(seq(0.1, 0.9, length.out = 7), from = "nfc")
+      y_point <- rep(grconvertY(0.92, from = "nfc"), length(xval))
+      y_lab <- rep(grconvertY(0.9, from = "nfc"), length(xval))
+
+      points(xval, y_point, pch = 21, bg = legend_cols, cex = 1.7, xpd = NA)
+      text(xval, y_lab, sprintf("%.1f", round(seq(-max_dz, max_dz, length.out = 7), 1)),
+           pos = 1, xpd = NA, cex = 1.2)
+      mtext("Elevation Change [m]", line = 3, side = 3, cex = 1.2)
     }
     dev.off()
-    system("magick convert -delay 100 -loop 0 Figs/dz*.png Figs/dz_out.gif")
+    system("cmd.exe", input = c(paste("cd", path),
+                      "magick convert -delay 100 -loop 0 Figs/dz*.png Figs/dz_out.gif"))
   }else{
     if (print){
       png(paste0(path, "/Network plot.png"), type = "cairo", units = "in", height = 4.5, width = 4, res = 500)
@@ -383,7 +395,8 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 #' Plots changes in channel width for all cross sections in the network
 #'
 #' @param print Should the plot be printed (defaults to `FALSE`)
-#' @param gif Should a gif be created (defaults to `FALSE`)
+#' @param gif Should a gif be created (defaults to `FALSE`). Must have
+#'   ImageMagick installed and a folder titled "Figs" in the `path` directory.
 #' @param max_plots Maximum number of plots in gif
 #' @param path Path to folder with model outputs
 #' @param custom_sgn Specifies the direction each reach should be plotted (`-1`
@@ -392,7 +405,8 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 #'
 #' @importFrom utils read.table
 #' @importFrom grDevices png dev.off
-#' @importFrom graphics par plot rect points legend mtext grconvertX grconvertY text
+#' @importFrom graphics par plot rect points legend mtext grconvertX grconvertY
+#'   text
 #'
 #' @export
 #'
@@ -405,6 +419,7 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
   dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE, sep = "\t")
 
   times <- unique(width[,1])
+  times <- times[-length(times)]
   n_nodes <- ncol(link)
   n_xs <- apply(width[1:n_nodes,2:ncol(width)], 1, function(x){sum(x > 0)})
 
@@ -417,11 +432,10 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
   ymax <- max(y)
 
   if (gif){
+    if (substr(path, 1, 1) == "~"){stop("Please supply full path, no ~ allowed.")}
+
     #Get times where we are going to make plots
-    factors <- (length(times) + 1:20) / (2:21)
-    n_plots <- max(factors[factors/floor(factors) == 1 & factors <= max_plots])
-    if (length(n_plots) == 0) {stop("Try increasing the max number of plots.")}
-    times_plot <- seq(0, max(times), length.out = n_plots)
+    times_plot <- seq(0, max(times), length.out = max_plots)
 
     #Get total width change
     dwidth_tot <- width[width[,1] == max(times),2:ncol(width)] -
@@ -429,10 +443,11 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
     max_dwidth <- max(abs(dwidth_tot))
     legend_cols <- rev(cRamp_legend(7, "RdBu"))
 
-    png(paste0(path, "/Figs/Width Network %02d.png"), type = "cairo", units = "in", height = 5, width = 5, res = 500)
-    for (k in 1:n_plots){
+    png(paste0(path, "/Figs/Width Network %02d.png"), type = "cairo", units = "in", height = 4.5, width = 4, res = 500)
+    for (k in 1:length(times_plot)){
       #calculated width changes
-      dwidth <- width[width[,1] == times_plot[k],2:ncol(width)] -
+      time_round <- times[which(abs(times - times_plot[k]) == min(abs(times - times_plot[k])))]
+      dwidth <- width[width[,1] == time_round, 2:ncol(width)] -
         width[width[,1] == min(times_plot),2:ncol(width)]
 
       #Convert dz to vector to get colors - add maximum dwidth to get right scale
@@ -442,7 +457,7 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
       #Convert colors back to matrix - removing max dwidth value
       colors <- matrix(colors[1:(length(colors) - 2)], nrow = n_nodes, byrow = TRUE)
 
-      par(mar = c(1, 1, 1, 1), mfrow = c(1,1))
+      par(mar = c(0.5, 0.5, 4, 0.5), mfrow = c(1,1))
       plot(NA, xlim = c(xmin, xmax * 1.05), ylim = c(0, ymax), yaxt = "n", xaxt = "n", xlab = "", ylab = "")
       rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "gray40")
 
@@ -462,14 +477,21 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
         #text(xy[i, 1], xy[i, 2], i, pos = 4)
       }
 
-      legend("topleft", legend = round(seq(-max_dwidth, max_dwidth, length.out = 7), 2),
-             fill = legend_cols, bty = "n", title = "Width Change [m]",
-             text.col = "white")
-      legend("bottomright", legend = paste(round(times_plot[k] / 365, 1), "Years"),
+      legend("bottomright", legend = paste(round(time_round / 365, 1), "Years"),
              pch = NA, bty = "n", text.col = "white", cex = 1.3)
+
+      xval <- grconvertX(seq(0.1, 0.9, length.out = 7), from = "nfc")
+      y_point <- rep(grconvertY(0.92, from = "nfc"), length(xval))
+      y_lab <- rep(grconvertY(0.9, from = "nfc"), length(xval))
+
+      points(xval, y_point, pch = 21, bg = legend_cols, cex = 1.7, xpd = NA)
+      text(xval, y_lab, sprintf("%.1f", round(seq(-max_dz, max_dz, length.out = 7), 1)),
+           pos = 1, xpd = NA, cex = 1.2)
+      mtext("Elevation Change [m]", line = 3, side = 3, cex = 1.2)
     }
     dev.off()
-    system("magick convert -delay 100 -loop 0 Figs/Width*.png Figs/width_out.gif")
+    system("cmd.exe", input = c(paste("cd", path),
+                                "magick convert -delay 100 -loop 0 Figs/Width*.png Figs/width_out.gif"))
   }else{
     if (print){
       png(paste0(path, "/Width plot.png"), type = "cairo", units = "in", height = 4.5, width = 4, res = 500)
