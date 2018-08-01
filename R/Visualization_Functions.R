@@ -1903,6 +1903,8 @@ sed_lines <- function(path = ""){
 #'   is left, `1` is right)
 #' @param prob Numeric vector of percentiles of Monte Carlo results to plot in
 #'   addition to the median (defaults to 0.05 and 0.95)
+#' @param use_files Logical. Should results files that have been loaded be used
+#'   (defaults to `TRUE`)
 #'
 #' @importFrom utils read.table
 #' @importFrom stats quantile median
@@ -1912,7 +1914,9 @@ sed_lines <- function(path = ""){
 #' @export
 #'
 width_MC_plot <- function(print = FALSE, n_MC, path = "",
-                          MC_path = NULL, custom_sgn = NULL, prob = c(0.05, 0.95)){
+                          MC_path = NULL, custom_sgn = NULL, prob = c(0.05, 0.95),
+                          use_files = TRUE){
+
   link <- read.table(paste0(path, "/Input link.txt"), header = FALSE, sep = " ")
   dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE, sep = "\t")
 
@@ -1920,7 +1924,7 @@ width_MC_plot <- function(print = FALSE, n_MC, path = "",
 
   #Get MC results
   #check if it already exists
-  if (exists("MC_width")){
+  if (exists("MC_width") & use_files){
     print("Using data already read from file.")
   }else{
     print("Reading data from file...")
@@ -2053,6 +2057,8 @@ width_MC_plot <- function(print = FALSE, n_MC, path = "",
 #'   is left, `1` is right)
 #' @param prob Numeric vector of percentiles of Monte Carlo results to plot in
 #'   addition to the median (defaults to 0.05 and 0.95)
+#' @param use_files Logical. Should results files that have been loaded be used
+#'   (defaults to `TRUE`)
 #'
 #' @importFrom utils read.table
 #' @importFrom stats quantile median
@@ -2062,7 +2068,9 @@ width_MC_plot <- function(print = FALSE, n_MC, path = "",
 #' @export
 #'
 dz_MC_plot <- function(print = FALSE, n_MC, path = "",
-                       MC_path = NULL, custom_sgn = NULL, prob = c(0.05, 0.95)){
+                       MC_path = NULL, custom_sgn = NULL, prob = c(0.05, 0.95),
+                       use_files = TRUE){
+
   link <- read.table(paste0(path, "/Input link.txt"), header = FALSE, sep = " ")
   dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE, sep = "\t")
 
@@ -2070,7 +2078,7 @@ dz_MC_plot <- function(print = FALSE, n_MC, path = "",
 
   #Get MC results
   #check if it already exists
-  if (exists("MC_bed_z")){
+  if (exists("MC_bed_z") & use_files){
     print("Using data already read from file.")
   }else{
     print("Reading data from file...")
@@ -2211,6 +2219,8 @@ dz_MC_plot <- function(print = FALSE, n_MC, path = "",
 #' @param print Should the plot be printed to a file (defaults to `FALSE`)
 #' @param type Whether sediment loading (`type = "sed"`, default) or pollutant
 #'   loading (`type =  "p"`) should be plotted
+#' @param use_files Logical. Should results files that have been loaded be used
+#'   (defaults to `TRUE`)
 #'
 #' @importFrom utils read.table
 #' @importFrom stats quantile median
@@ -2222,7 +2232,7 @@ dz_MC_plot <- function(print = FALSE, n_MC, path = "",
 #'
 reach_loads <- function(path = "", custom_sgn = NULL,
                         MC_path = NULL, n_MC = 0, units = "ton", prob = c(0.05, 0.95),
-                        print = FALSE, type = "sed"){
+                        print = FALSE, type = "sed", use_files = TRUE){
 
   if (is.null(MC_path)){MC_path <- path}
 
@@ -2255,7 +2265,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
   #Get MC results
   if (n_MC > 0){
     #check if it already exists
-    if (exists("MC_loading")){
+    if (exists("MC_loading") & use_files){
       print("Using data already read from file.")
     }else{
       print("Reading data from file...")

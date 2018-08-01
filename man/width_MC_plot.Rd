@@ -5,7 +5,7 @@
 \title{Plots network showing changes in channel width, with uncertainty}
 \usage{
 width_MC_plot(print = FALSE, n_MC, path = "", MC_path = NULL,
-  custom_sgn = NULL, prob = c(0.05, 0.95))
+  custom_sgn = NULL, prob = c(0.05, 0.95), use_files = TRUE)
 }
 \arguments{
 \item{print}{Should the plot be printed to a file (defaults to `FALSE`)}
@@ -21,6 +21,9 @@ is left, `1` is right)}
 
 \item{prob}{Numeric vector of percentiles of Monte Carlo results to plot in
 addition to the median (defaults to 0.05 and 0.95)}
+
+\item{use_files}{Logical. Should results files that have been loaded be used
+(defaults to `TRUE`)}
 }
 \description{
 Plots network showing changes in channel width, with uncertainty

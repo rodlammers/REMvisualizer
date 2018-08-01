@@ -5,7 +5,8 @@
 \title{Plots mass sediment loading rates by reach, with uncertainty}
 \usage{
 reach_loads(path = "", custom_sgn = NULL, MC_path = NULL, n_MC = 0,
-  units = "ton", prob = c(0.05, 0.95), print = FALSE)
+  units = "ton", prob = c(0.05, 0.95), print = FALSE, type = "sed",
+  use_files = TRUE)
 }
 \arguments{
 \item{path}{Path to folder with model outputs}
@@ -24,6 +25,12 @@ is left, `1` is right)}
 addition to the median (defaults to 0.05 and 0.95)}
 
 \item{print}{Should the plot be printed to a file (defaults to `FALSE`)}
+
+\item{type}{Whether sediment loading (`type = "sed"`, default) or pollutant
+loading (`type =  "p"`) should be plotted}
+
+\item{use_files}{Logical. Should results files that have been loaded be used
+(defaults to `TRUE`)}
 }
 \description{
 Plots mass sediment loading rates by reach, with uncertainty
