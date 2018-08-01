@@ -2028,8 +2028,8 @@ width_MC_plot <- function(print = FALSE, n_MC, path = "",
     #        cex = 1.3, text.col = "white")
     legend("bottomright", legend = label[k], pch = NA, bty = "n", cex = 2,
            text.col = "white")
-    add_label(0, 0.05, paste0("(", letters[k], ")"), col = "white",
-              cex = 2)
+    # add_label(0, 0.05, paste0("(", letters[k], ")"), col = "white",
+    #           cex = 2)
     if (k == 2){
       xval <- grconvertX(seq(-0.1, 1.1, length.out = 7), from = "nfc")
       y_point <- rep(grconvertY(0.935, from = "nfc"), length(xval))
@@ -2185,8 +2185,8 @@ dz_MC_plot <- function(print = FALSE, n_MC, path = "",
     #        cex = 1.6, text.col = "white")
     legend("bottomright", legend = label[k], pch = NA, bty = "n", cex = 2,
            text.col = "white")
-    add_label(0, 0.05, paste0("(", letters[k], ")"), col = "white",
-              cex = 2)
+    # add_label(0, 0.05, paste0("(", letters[k], ")"), col = "white",
+    #           cex = 2)
     if (k == 2){
       xval <- grconvertX(seq(-0.1, 1.1, length.out = 7), from = "nfc")
       y_point <- rep(grconvertY(0.935, from = "nfc"), length(xval))
