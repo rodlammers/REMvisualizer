@@ -2209,6 +2209,8 @@ dz_MC_plot <- function(print = FALSE, n_MC, path = "",
 #' @param prob Numeric vector of percentiles of Monte Carlo results to plot in
 #'   addition to the median (defaults to 0.05 and 0.95)
 #' @param print Should the plot be printed to a file (defaults to `FALSE`)
+#' @param type Whether sediment loading (`type = "sed"`, default) or pollutant
+#'   loading (`type =  "p"`) should be plotted
 #'
 #' @importFrom utils read.table
 #' @importFrom stats quantile median
@@ -2220,12 +2222,16 @@ dz_MC_plot <- function(print = FALSE, n_MC, path = "",
 #'
 reach_loads <- function(path = "", custom_sgn = NULL,
                         MC_path = NULL, n_MC = 0, units = "ton", prob = c(0.05, 0.95),
-                        print = FALSE){
+                        print = FALSE, type = "sed"){
 
   if (is.null(MC_path)){MC_path <- path}
 
   bank_loads <- read.table(paste0(path, "/Output bank loading.txt"), header = TRUE)
-  sed_loads <- bank_loads[,which(substr(colnames(bank_loads), 1, 3) == "Sed")]
+  if (type == "sed"){
+    sed_loads <- bank_loads[,which(substr(colnames(bank_loads), 1, 3) == "Sed")]
+  }else{
+    sed_loads <- bank_loads[,which(substr(colnames(bank_loads), 1, 1) == "P")]
+  }
 
   link <- read.table(paste0(path, "/Input link.txt"), header = FALSE, sep = " ")
   dx <- read.table(paste0(path, "/Output dx.txt"), header = FALSE)
@@ -2256,8 +2262,12 @@ reach_loads <- function(path = "", custom_sgn = NULL,
       MC_loading <- list()
       for (i in 0:(n_MC - 1)){
         MC_loading[[i + 1]] <- read.table(paste0(MC_path, "/MC Outputs/Output bank loading", i, ".txt"), header = TRUE)
-        #Keep only sediment
-        MC_loading[[i + 1]] <- MC_loading[[i + 1]][,1:n_nodes]
+        #Keep sediment or P
+        if (type == "sed"){
+          MC_loading[[i + 1]] <- MC_loading[[i + 1]][,1:n_nodes]
+        }else{
+          MC_loading[[i + 1]] <- MC_loading[[i + 1]][,(n_nodes + 1):ncol(MC_loading[[i + 1]])]
+        }
       }
     }
 
@@ -2277,15 +2287,15 @@ reach_loads <- function(path = "", custom_sgn = NULL,
     colors_med <- cRamp(c(loads_med, max_load, 0), "Reds")
     colors_95 <- cRamp(c(loads_95, max_load, 0), "Reds")
 
-    #loads_by_reach <- apply(sed_loads, 2, sum) / 1000 / lengths #ton/km
-    #colors <- cRamp(loads_by_reach, "Reds")
     colors_legend <- cRamp_legend(7, "Reds")
     legend_lab <- dplyr::case_when(units == "kg" ~ "kg/km/yr",
                             units == "ton" ~ "ton/km/yr",
                             units == "1000 ton" ~ "1000 ton/km/yr")
 
-    png(paste0(path, "/Loading MC Network.png"), type = "cairo", units = "in",
-        height = 4.5, width = 10, res = 800)
+    if (print){
+      png(paste0(path, "/Loading MC Network.png"), type = "cairo", units = "in",
+          height = 4.5, width = 10, res = 800)
+    }
 
     label <- c(paste0(sprintf("%.1f", prob[1]*100), "%"), "Median",
                paste0(sprintf("%.1f", prob[2]*100), "%"))
@@ -2310,8 +2320,8 @@ reach_loads <- function(path = "", custom_sgn = NULL,
 
       legend("bottomright", legend = label[k], pch = NA, bty = "n", cex = 2,
              text.col = "white")
-      add_label(0, 0.05, paste0("(", letters[k], ")"), col = "white",
-                cex = 2)
+      # add_label(0, 0.05, paste0("(", letters[k], ")"), col = "white",
+      #           cex = 2)
       if (k == 2){
         xval <- grconvertX(seq(-0.1, 1.1, length.out = 7), from = "nfc")
         y_point <- rep(grconvertY(0.935, from = "nfc"), length(xval))
@@ -2320,19 +2330,24 @@ reach_loads <- function(path = "", custom_sgn = NULL,
         points(xval, y_point, pch = 22, bg = colors_legend, cex = 2.5, xpd = NA)
         text(xval, y_lab, sprintf("%.0f", round(seq(0, max_load, length.out = 7), 0)),
              pos = 1, xpd = NA, cex = 1.7)
-        mtext(paste0("Sediment Loading [", legend_lab, "]"), line = 3.5,
-              side = 3, cex = 1.2)
+        if (type == "sed"){
+          mtext(paste0("Sediment Loading [", legend_lab, "]"), line = 3.5,
+                side = 3, cex = 1.2)
+        }else{
+          mtext(paste0("Pollutant Loading [", legend_lab, "]"), line = 3.5,
+                side = 3, cex = 1.2)
+        }
       }
     }
-    dev.off()
+    if (print){
+      dev.off()
+    }
   }else{
 
     loads_by_reach <- apply(sed_loads, 2, sum) / scale / lengths / (nrow(sed_loads) / 365) #ton (or kg) / km / yr
     max_load <- max(loads_by_reach)
     colors <- cRamp(c(loads_by_reach, max_load, 0), "Reds")
 
-    #loads_by_reach <- apply(sed_loads, 2, sum) / 1000 / lengths #ton/km
-    #colors <- cRamp(loads_by_reach, "Reds")
     colors_legend <- cRamp_legend(7, "Reds")
     legend_lab <- dplyr::case_when(units == "kg" ~ "kg/km/yr",
                             units == "ton" ~ "ton/km/yr",
@@ -2353,11 +2368,6 @@ reach_loads <- function(path = "", custom_sgn = NULL,
       lines(x[i,1:n_xs[i]], y[i,1:n_xs[i]], lwd = 4, col = colors[i])
     }
 
-    # legend("bottomright", legend = label[k], pch = NA, bty = "n", cex = 2,
-    #        text.col = "white")
-    # add_label(0, 0.05, paste0("(", letters[k], ")"), col = "white",
-    #           cex = 2)
-
     xval <- grconvertX(seq(0.1, 0.9, length.out = 7), from = "nfc")
     y_point <- rep(grconvertY(0.89, from = "nfc"), length(xval))
     y_lab <- rep(grconvertY(0.87, from = "nfc"), length(xval))
@@ -2365,8 +2375,13 @@ reach_loads <- function(path = "", custom_sgn = NULL,
     points(xval, y_point, pch = 22, bg = colors_legend, cex = 1.8, xpd = NA)
     text(xval, y_lab, sprintf("%.0f", round(seq(0, max_load, length.out = 7), 0)),
          pos = 1, xpd = NA, cex = 1.2)
-    mtext(paste0("Sediment Loading [", legend_lab, "]"), line = 3.5,
-          side = 3, cex = 1.2)
+    if (type == "sed"){
+      mtext(paste0("Sediment Loading [", legend_lab, "]"), line = 3.5,
+            side = 3, cex = 1.2)
+    }else{
+      mtext(paste0("Pollutant Loading [", legend_lab, "]"), line = 3.5,
+            side = 3, cex = 1.2)
+    }
 
     if (print){
       dev.off()
