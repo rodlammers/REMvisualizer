@@ -1660,7 +1660,11 @@ network_XS_plot <- function(path = "", XS = NULL,
 
     #Convert dz to vector to get colors - add maximum dz to get right scale
     dz_vector <- c(as.vector(t(dz)), max_dz, -max_dz)
-    colors <- cRamp(dz_vector, "RdYlBu")
+    if (max_dz == 0){
+      colors <- rep(legend_cols[4], length(dz_vector))
+    }else{
+      colors <- cRamp(dz_vector, "RdYlBu")
+    }
 
     #Convert colors back to matrix - removing max dz value
     colors <- matrix(colors[1:(length(colors) - 2)], nrow = n_nodes, byrow = TRUE)
@@ -1754,7 +1758,11 @@ network_XS_plot <- function(path = "", XS = NULL,
       #Convert dz to vector to get colors - add maximum dz to get right scale
       max_dwh <- max(abs(data[,which(times %in% times_plot)]))
       dwh_vector <- c(data[,which(times == times_plot[k])], max_dwh, -max_dwh)
-      colors <- cRamp(dwh_vector, "RdYlBu")
+      if (max_dwh == 0){
+        colors <- rep(legend_cols[4], length(dwh_vector))
+      }else{
+        colors <- cRamp(dwh_vector, "RdYlBu")
+      }
       colors <- colors[1:(length(colors) - 2)]
 
       plot(NA, xlim = c(xmin, xmax * 1.05), ylim = c(0, ymax), yaxt = "n", xaxt = "n", xlab = "", ylab = "")
