@@ -2395,12 +2395,17 @@ reach_loads <- function(path = "", custom_sgn = NULL,
 
     loads_by_reach <- apply(sed_loads, 2, sum) / scale / lengths / (nrow(sed_loads) / 365) #ton (or kg) / km / yr
     max_load <- max(loads_by_reach)
-    colors <- cRamp(c(loads_by_reach, max_load, 0), "Reds")
 
     colors_legend <- cRamp_legend(7, "Reds")
     legend_lab <- dplyr::case_when(units == "kg" ~ "kg/km/yr",
                             units == "ton" ~ "ton/km/yr",
                             units == "1000 ton" ~ "1000 ton/km/yr")
+
+    if (max_load == 0){
+      colors <- rep(colors_legend[1], length(loads_by_reach))
+    }else{
+      colors <- cRamp(c(loads_by_reach, max_load, 0), "Reds")
+    }
 
     if (print){
       png(paste0(path, "/Loading Network.png"), type = "cairo", units = "in",
