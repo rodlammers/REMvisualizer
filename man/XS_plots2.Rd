@@ -4,12 +4,15 @@
 \alias{XS_plots2}
 \title{Plots initial and final cross section geometry for any specified cross sections}
 \usage{
-XS_plots2(path = "", XS = 1)
+XS_plots2(path = "", reach = 1, XS = 1)
 }
 \arguments{
 \item{path}{Path to folder with model outputs}
 
-\item{XS}{A numeric vector of the cross sections to be plotted}
+\item{reach}{A numeric vector of reaches for which to plot cross sections}
+
+\item{XS}{A numeric vector of the cross sections within each reach to be
+plotted (one `XS` per `reach`)}
 }
 \description{
 Plots initial and final cross section geometry for any specified cross sections

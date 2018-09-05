@@ -889,7 +889,9 @@ XS_plots <- function(path = "") {
 #' Plots initial and final cross section geometry for any specified cross sections
 #'
 #' @param path Path to folder with model outputs
-#' @param XS A numeric vector of the cross sections to be plotted
+#' @param reach A numeric vector of reaches for which to plot cross sections
+#' @param XS A numeric vector of the cross sections within each reach to be
+#' plotted (one `XS` per `reach`)
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines points mtext
