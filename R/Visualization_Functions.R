@@ -897,14 +897,41 @@ XS_plots <- function(path = "") {
 #' @importFrom dplyr %>%
 #'
 #' @export
-XS_plots2 <- function(path = "", XS = 1){
+XS_plots2 <- function(path = "", reach = 1, XS = 1){
 
   output <- read.table(paste0(path, "/Output XS geometry all.txt")) %>%
     dplyr::filter_(~ V1 == 0 | V1 == max(V1))
   n_XS <- sum(output[,1] == 0)
   par(mfrow = c(2, 1), mar = c(2.5, 3, 1, 0.5), oma = c(1, 1.1, 0, 0))
   #par(mfrow = c(3, 2), mar = c(3,3,1,1))
-  for (i in XS){
+
+  #Get all XS indices based on reach-XS pair
+  #need to get #XS by reach
+  dz_output <- read.table(file.path(path, "Output z.txt")) %>%
+    dplyr::filter_(~ V1 == 0) %>%
+    dplyr::select_(~ -V1)
+
+  n_XS_reach <- apply(dz_output, 1, function(x){sum(x != 0)})
+
+  XS_all <- purrr::map2_dbl(reach, XS, function(x, y, n_XS_reach){
+    if (x == 1){
+      XS_ID = y
+    }else if(!(y > n_XS_reach[x])){
+      XS_ID = sum(n_XS_reach[1:(x - 1)]) + y
+    }else{
+      XS_ID = NA
+    }
+
+    return(XS_ID)
+  }, n_XS_reach)
+
+  #Drop NAs from all vectors
+  reach <- reach[!is.na(XS_all)]
+  XS <- XS[!is.na(XS_all)]
+  XS_all <- XS_all[!is.na(XS_all)]
+
+  count <- 1
+  for (i in XS_all){
     #file_nm <- paste0("U:/PhD Work/Toutle River Data/XS Plots/", xs_names[i], ".png")
     #png(file_nm, type = "cairo", units = "in", height = 4, width = 5, res = 500)
     #colors <- colorRampPalette(c("green", "purple"))(ncol)
@@ -921,7 +948,7 @@ XS_plots2 <- function(path = "", XS = 1){
     ymax <- max(c(modz1, modz2), na.rm = TRUE)
 
     plot(NA, xlim = c(xmin, xmax), ylim = c(ymin, ymax),
-         xlab = "", ylab = "", las = 1, main = i)
+         xlab = "", ylab = "", las = 1, main = paste("Reach", reach[count], "XS", XS[count]))
     # for (j in 1:ncol){
     #   lines(elev_m ~ dist_m, test[test$date == unique(test$date)[j], ], col = colors[j])
     # }
@@ -933,6 +960,8 @@ XS_plots2 <- function(path = "", XS = 1){
     #final
     lines(modx2, modz2, col = adjustcolor("red", 0.7), lwd = 2)
     points(modx2, modz2, col = adjustcolor("red", 0.7), pch = 16)
+
+    count <- count + 1
 
   }
   mtext("Station [m]", side = 1, line = 0, outer = TRUE)
