@@ -916,7 +916,7 @@ XS_plots2 <- function(path = "", reach = 1, XS = 1){
   n_XS_reach <- apply(dz_output, 1, function(x){sum(x != 0)})
 
   XS_all <- purrr::map2_dbl(reach, XS, function(x, y, n_XS_reach){
-    if (x == 1){
+    if (x == 1 & !(y > n_XS_reach[x])){
       XS_ID = y
     }else if(!(y > n_XS_reach[x])){
       XS_ID = sum(n_XS_reach[1:(x - 1)]) + y
