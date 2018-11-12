@@ -2455,7 +2455,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
 #'
 #' @export
 #'
-pollutant_loading <- function(path = "", type = 1){
+pollutant_loading <- function(path = "", type = 1, returnvals = FALSE){
 
   loads <- read.table(file.path(path, "Output bank loading.txt"), header = TRUE)
   sed_loads <- loads[,which(substr(colnames(loads), 1, 3) == "Sed")]
@@ -2540,5 +2540,8 @@ pollutant_loading <- function(path = "", type = 1){
                  rect.col = cRamp_legend(5, "viridis"), xpd = NA)
   }
 
-
+  if (returvals){
+    return(data.frame(Sed = total_sed,
+                      P = total_P))
+  }
 }
