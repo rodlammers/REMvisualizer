@@ -2449,6 +2449,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
 #'
 #' @param path Path to folder with model outputs
 #' @param type `type = 1` plots cumulative loads, `type = 2` plots daily loads
+#' @param returnvals Should the cumulative load values be returned (logical)
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines grconvertX grconvertY
@@ -2540,7 +2541,7 @@ pollutant_loading <- function(path = "", type = 1, returnvals = FALSE){
                  rect.col = cRamp_legend(5, "viridis"), xpd = NA)
   }
 
-  if (returvals){
+  if (returnvals){
     return(data.frame(Sed = total_sed,
                       P = total_P))
   }
