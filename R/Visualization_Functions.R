@@ -254,7 +254,11 @@ dz_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
   times <- unique(bed_z[,1])
   times <- times[-length(times)]
   n_nodes <- ncol(link)
-  n_xs <- apply(bed_z[1:n_nodes,2:ncol(bed_z)], 1, function(x){sum(x > 0)})
+  if (ncol(bed_z) > 2){
+    n_xs <- apply(bed_z[1:n_nodes,2:ncol(bed_z)], 1, function(x){sum(x > 0)})
+  }else{
+    n_xs <- rep(1, n_nodes)
+  }
 
   coords <- make_network(n_nodes, n_xs, link, dx, custom_sgn)
   x <- coords$x
@@ -1591,7 +1595,12 @@ network_XS_plot <- function(path = "", XS = NULL,
 
   angle <- pi/8
 
-  n_xs <- apply(bed_z[1:n_nodes,2:ncol(bed_z)], 1, function(x){sum(x > 0)})
+  if (ncol(bed_z) > 2){
+    n_xs <- apply(bed_z[1:n_nodes,2:ncol(bed_z)], 1, function(x){sum(x > 0)})
+  }
+  else{
+    n_xs <- rep(1, n_nodes)
+  }
   x <- matrix(0, nrow = n_nodes + 1, ncol = max(n_xs))
   y <- x
   sgn <- rep(1, n_nodes)
@@ -2458,7 +2467,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
 #'
 pollutant_loading <- function(path = "", type = 1, returnvals = FALSE){
 
-  loads <- read.table(file.path(path, "Output bank loading.txt"), header = TRUE)
+  loads <- data.table::fread(file.path(path, "Output bank loading.txt"), header = TRUE, data.table = FALSE)
   sed_loads <- loads[,which(substr(colnames(loads), 1, 3) == "Sed")]
   P_loads <- loads[,which(substr(colnames(loads), 1, 1) == "P")]
 
