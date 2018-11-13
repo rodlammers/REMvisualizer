@@ -425,7 +425,12 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
   times <- unique(width[,1])
   times <- times[-length(times)]
   n_nodes <- ncol(link)
-  n_xs <- apply(width[1:n_nodes,2:ncol(width)], 1, function(x){sum(x > 0)})
+
+  if (ncol(width) > 2){
+    n_xs <- apply(width[1:n_nodes,2:ncol(width)], 1, function(x){sum(x > 0)})
+  }else{
+    n_xs <- rep(1, n_nodes)
+  }
 
   coords <- make_network(n_nodes, n_xs, link, dx, custom_sgn)
   x <- coords$x
@@ -2458,14 +2463,15 @@ reach_loads <- function(path = "", custom_sgn = NULL,
 #'
 #' @param path Path to folder with model outputs
 #' @param type `type = 1` plots cumulative loads, `type = 2` plots daily loads
-#' @param returnvals Should the cumulative load values be returned (logical)
+#' @param returnvals Should the cumulative load values be returned (defaults to `FALSE`)
+#' @param plot Should values be plotted (defaults to `TRUE`)
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines grconvertX grconvertY
 #'
 #' @export
 #'
-pollutant_loading <- function(path = "", type = 1, returnvals = FALSE){
+pollutant_loading <- function(path = "", type = 1, returnvals = FALSE, plot = TRUE){
 
   loads <- data.table::fread(file.path(path, "Output bank loading.txt"), header = TRUE, data.table = FALSE)
   sed_loads <- loads[,which(substr(colnames(loads), 1, 3) == "Sed")]
@@ -2492,62 +2498,64 @@ pollutant_loading <- function(path = "", type = 1, returnvals = FALSE){
 
   sed_scale <- get_scales(max_sed)
 
-  if (type == 1){
-    par(mfrow = c(1, 2), mar = c(3.5, 3.5, 1.5, 0.5), oma = c(0, 0, 1.5, 0),
-        mgp = c(2, 0.8, 0))
-    colors <- cRamp_legend(ncol(sed_loads), "viridis")
-    plot(1:length(total_sed) / 365, cumsum(total_sed) / sed_scale$scale, type = "l",
-         ylab = bquote("Sediment Load ["*.(a)*"]", list(a = sed_scale$units)), xlab = "Years",
-         las = 1, main = "Sediment Loads", lwd = 2)
-    for (i in 1:ncol(sed_loads)){
-      lines(1:nrow(sed_loads) / 365, cumsum(sed_loads[,i]) / sed_scale$scale, col = colors[i], lwd = 2)
-    }
+  if (plot){
+    if (type == 1){
+      par(mfrow = c(1, 2), mar = c(3.5, 3.5, 1.5, 0.5), oma = c(0, 0, 1.5, 0),
+          mgp = c(2, 0.8, 0))
+      colors <- cRamp_legend(ncol(sed_loads), "viridis")
+      plot(1:length(total_sed) / 365, cumsum(total_sed) / sed_scale$scale, type = "l",
+           ylab = bquote("Sediment Load ["*.(a)*"]", list(a = sed_scale$units)), xlab = "Years",
+           las = 1, main = "Sediment Loads", lwd = 2)
+      for (i in 1:ncol(sed_loads)){
+        lines(1:nrow(sed_loads) / 365, cumsum(sed_loads[,i]) / sed_scale$scale, col = colors[i], lwd = 2)
+      }
 
-    P_scale <- get_scales(max_P)
-    plot(1:length(total_P) / 365, cumsum(total_P) / P_scale$scale, type = "l",
-         ylab = bquote("Pollutant Load ["*.(a)*"]", list(a = P_scale$units)), xlab = "Years",
-         las = 1, main = "Pollutant Loads", lwd = 2)
-    for (i in 1:ncol(P_loads)){
-      lines(1:nrow(P_loads) / 365, cumsum(P_loads[,i]) / P_scale$scale, col = colors[i], lwd = 2)
-    }
+      P_scale <- get_scales(max_P)
+      plot(1:length(total_P) / 365, cumsum(total_P) / P_scale$scale, type = "l",
+           ylab = bquote("Pollutant Load ["*.(a)*"]", list(a = P_scale$units)), xlab = "Years",
+           las = 1, main = "Pollutant Loads", lwd = 2)
+      for (i in 1:ncol(P_loads)){
+        lines(1:nrow(P_loads) / 365, cumsum(P_loads[,i]) / P_scale$scale, col = colors[i], lwd = 2)
+      }
 
-    #Legend
-    xvals <- grconvertX(x = c(0.4, 0.6), from = "ndc", to = "user")
-    yvals <- grconvertY(y = c(0.96, 0.98), from = "ndc", to = "user")
-    color.legend(xvals[1], yvals[1], xvals[2], yvals[2], legend = c("US", "","",
-                                                                    "","DS"),
-                 align = "rb", gradient = "x",
-                 rect.col = cRamp_legend(5, "viridis"), xpd = NA)
-  }
-  else if (type == 2){
-    sed_loads[sed_loads == 0] <- NA
-    P_loads[P_loads == 0] <- NA
-    par(mfrow = c(1, 2), mar = c(3.5, 3.5, 1.5, 0.5), oma = c(0, 0, 1.5, 0),
-        mgp = c(2, 0.8, 0))
-    colors <- cRamp_legend(ncol(sed_loads), "viridis")
-    sed_scale <- get_scales(max(total_sed, na.rm = TRUE))
-    plot(1:length(total_sed) / 365, total_sed / sed_scale$scale, type = "l",
-         ylab = bquote("Sediment Load ["*.(a)*"]", list(a = sed_scale$units)), xlab = "Years",
-         las = 1, main = "Sediment Loads", lwd = 2)
-    for (i in 1:ncol(sed_loads)){
-      lines(1:nrow(sed_loads) / 365, sed_loads[,i] / sed_scale$scale, col = colors[i], lwd = 2)
+      #Legend
+      xvals <- grconvertX(x = c(0.4, 0.6), from = "ndc", to = "user")
+      yvals <- grconvertY(y = c(0.96, 0.98), from = "ndc", to = "user")
+      color.legend(xvals[1], yvals[1], xvals[2], yvals[2], legend = c("US", "","",
+                                                                      "","DS"),
+                   align = "rb", gradient = "x",
+                   rect.col = cRamp_legend(5, "viridis"), xpd = NA)
     }
+    else if (type == 2){
+      sed_loads[sed_loads == 0] <- NA
+      P_loads[P_loads == 0] <- NA
+      par(mfrow = c(1, 2), mar = c(3.5, 3.5, 1.5, 0.5), oma = c(0, 0, 1.5, 0),
+          mgp = c(2, 0.8, 0))
+      colors <- cRamp_legend(ncol(sed_loads), "viridis")
+      sed_scale <- get_scales(max(total_sed, na.rm = TRUE))
+      plot(1:length(total_sed) / 365, total_sed / sed_scale$scale, type = "l",
+           ylab = bquote("Sediment Load ["*.(a)*"]", list(a = sed_scale$units)), xlab = "Years",
+           las = 1, main = "Sediment Loads", lwd = 2)
+      for (i in 1:ncol(sed_loads)){
+        lines(1:nrow(sed_loads) / 365, sed_loads[,i] / sed_scale$scale, col = colors[i], lwd = 2)
+      }
 
-    P_scale <- get_scales(max(P_loads, na.rm = TRUE))
-    plot(1:length(total_P) / 365, total_P / P_scale$scale, type = "l",
-         ylab = bquote("Pollutant Load ["*.(a)*"]", list(a = P_scale$units)), xlab = "Years",
-         las = 1, main = "Pollutant Loads", lwd = 2)
-    for (i in 1:ncol(P_loads)){
-      lines(1:nrow(P_loads) / 365, P_loads[,i] / P_scale$scale, col = colors[i], lwd = 2)
+      P_scale <- get_scales(max(P_loads, na.rm = TRUE))
+      plot(1:length(total_P) / 365, total_P / P_scale$scale, type = "l",
+           ylab = bquote("Pollutant Load ["*.(a)*"]", list(a = P_scale$units)), xlab = "Years",
+           las = 1, main = "Pollutant Loads", lwd = 2)
+      for (i in 1:ncol(P_loads)){
+        lines(1:nrow(P_loads) / 365, P_loads[,i] / P_scale$scale, col = colors[i], lwd = 2)
+      }
+
+      #Legend
+      xvals <- grconvertX(x = c(0.4, 0.6), from = "ndc", to = "user")
+      yvals <- grconvertY(y = c(0.96, 0.98), from = "ndc", to = "user")
+      color.legend(xvals[1], yvals[1], xvals[2], yvals[2], legend = c("US", "","",
+                                                                      "","DS"),
+                   align = "rb", gradient = "x",
+                   rect.col = cRamp_legend(5, "viridis"), xpd = NA)
     }
-
-    #Legend
-    xvals <- grconvertX(x = c(0.4, 0.6), from = "ndc", to = "user")
-    yvals <- grconvertY(y = c(0.96, 0.98), from = "ndc", to = "user")
-    color.legend(xvals[1], yvals[1], xvals[2], yvals[2], legend = c("US", "","",
-                                                                    "","DS"),
-                 align = "rb", gradient = "x",
-                 rect.col = cRamp_legend(5, "viridis"), xpd = NA)
   }
 
   if (returnvals){
