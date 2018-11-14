@@ -1196,8 +1196,8 @@ D50_plot <- function(path = ""){
     min_D50 <- min(apply(D50[, 2:ncol(D50)], 2, min, na.rm = TRUE))
     max_D50 <- max(apply(D50[, 2:ncol(D50)], 2, max, na.rm = TRUE))
   }else{
-    min_D50 <- min(D50, na.rm = TRUE)
-    max_D50 <- max(D50, na.rm = TRUE)
+    min_D50 <- min(D50[1,-1], na.rm = TRUE)
+    max_D50 <- max(D50[1,-1], na.rm = TRUE)
   }
 
   # if (n_nodes > 1) {
@@ -1219,7 +1219,7 @@ D50_plot <- function(path = ""){
     if (ncol(sub) > 2){
       max_D50 <- max(apply(sub[, 2:(n_colors + 1)], 2, max, na.rm = TRUE))
     }else{
-      max_D50 <- max(D50, na.rm = TRUE)
+      max_D50 <- max(D50[1, -1], na.rm = TRUE)
     }
 
     colors <- cRamp_legend(n_colors, "viridis")
