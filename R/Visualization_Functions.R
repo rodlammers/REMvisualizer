@@ -1216,7 +1216,11 @@ D50_plot <- function(path = ""){
     sub <- D50[row_seq, ]
     n_colors <- sum(!is.na(sub[1, ])) - 1
 
-    max_D50<- max(apply(sub[, 2:(n_colors + 1)], 2, max, na.rm = TRUE))
+    if (ncol(sub) > 2){
+      max_D50 <- max(apply(sub[, 2:(n_colors + 1)], 2, max, na.rm = TRUE))
+    }else{
+      max_D50 <- max(D50, na.rm = TRUE)
+    }
 
     colors <- cRamp_legend(n_colors, "viridis")
     colors <- adjustcolor(colors, alpha.f = 0.8)
