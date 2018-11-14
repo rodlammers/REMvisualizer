@@ -176,6 +176,7 @@ XS_areas <- function(path = ""){
 #'   is left, `1` is right)
 #'
 #' @return List of x and y coordinates of channel network
+#' @export
 #'
 make_network <- function(n_nodes, n_xs, link, dx, custom_sgn){
 
