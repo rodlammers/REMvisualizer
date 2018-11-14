@@ -4,7 +4,8 @@
 \alias{XS_plots3}
 \title{Plots cross section geometry over time for any specified cross section}
 \usage{
-XS_plots3(path = "", XS = 1, n_plots = 0, ts = 0.2, print = FALSE)
+XS_plots3(path = "", XS = 1, n_plots = 0, ts = 0.2,
+  print = FALSE)
 }
 \arguments{
 \item{path}{Path to folder with model outputs}

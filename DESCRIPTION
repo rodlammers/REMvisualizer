@@ -21,7 +21,6 @@ Imports:
     stochasim,
     viridis (>= 0.5.1),
     zoo (>= 1.8.3)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 URL: https://github.com/rodlammers/REMvisualizer
 BugReports: https://github.com/rodlammers/REMvisualizer/issues
-

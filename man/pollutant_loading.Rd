@@ -4,12 +4,17 @@
 \alias{pollutant_loading}
 \title{Plots cumulative or daily pollutant loading}
 \usage{
-pollutant_loading(path = "", type = 1)
+pollutant_loading(path = "", type = 1, returnvals = FALSE,
+  plot = TRUE)
 }
 \arguments{
 \item{path}{Path to folder with model outputs}
 
 \item{type}{`type = 1` plots cumulative loads, `type = 2` plots daily loads}
+
+\item{returnvals}{Should the cumulative load values be returned (defaults to `FALSE`)}
+
+\item{plot}{Should values be plotted (defaults to `TRUE`)}
 }
 \description{
 Plots cumulative or daily pollutant loading
