@@ -1192,8 +1192,13 @@ D50_plot <- function(path = ""){
   xs <- 0:(ncol(D50) - 2)
   x_max <- max(dx, na.rm = TRUE) * max(xs)
 
-  min_D50 <- min(apply(D50[, 2:ncol(D50)], 2, min, na.rm = TRUE))
-  max_D50 <- max(apply(D50[, 2:ncol(D50)], 2, max, na.rm = TRUE))
+  if (ncol(D50) > 2){
+    min_D50 <- min(apply(D50[, 2:ncol(D50)], 2, min, na.rm = TRUE))
+    max_D50 <- max(apply(D50[, 2:ncol(D50)], 2, max, na.rm = TRUE))
+  }else{
+    min_D50 <- min(D50, na.rm = TRUE)
+    max_D50 <- max(D50, na.rm = TRUE)
+  }
 
   # if (n_nodes > 1) {
   #   n_col <- 2
