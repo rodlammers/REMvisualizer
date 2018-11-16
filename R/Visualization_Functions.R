@@ -2313,7 +2313,11 @@ reach_loads <- function(path = "", custom_sgn = NULL,
   lengths <- apply(dx_init, 1, sum) / 1000 #Reach length, km
 
   n_nodes <- ncol(bank_loads) / 2
-  n_xs <- apply(dx[1:n_nodes,2:ncol(dx)], 1, function(x){sum(x > 0)})
+  if (ncol(dx) > 2){
+    n_xs <- apply(dx[1:n_nodes,2:ncol(dx)], 1, function(x){sum(x > 0)})
+  }else{
+    n_xs <- rep(1, n_nodes)
+  }
 
   coords <- make_network(n_nodes, n_xs, link, dx, custom_sgn)
   x <- coords$x
