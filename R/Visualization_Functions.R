@@ -2396,7 +2396,7 @@ reach_loads <- function(path = "", custom_sgn = NULL,
         if (n_xs[i] > 1){
           lines(x[i,1:n_xs[i]], y[i,1:n_xs[i]], lwd = 4, col = colors[i])
         }else{
-          points(x[i, 1], y[i, 1], pch = 16, cex = 1.5, col = colors[i])
+          points(x[i, 1], y[i, 1], pch = 16, cex = 1.3, col = colors[i])
         }
       }
 
@@ -2452,7 +2452,11 @@ reach_loads <- function(path = "", custom_sgn = NULL,
     rect(par("usr")[1],par("usr")[3],par("usr")[2],par("usr")[4],col = "gray40")
 
     for (i in 1:n_nodes){
-      lines(x[i,1:n_xs[i]], y[i,1:n_xs[i]], lwd = 4, col = colors[i])
+      if (n_xs[i] > 1){
+        lines(x[i,1:n_xs[i]], y[i,1:n_xs[i]], lwd = 4, col = colors[i])
+      }else{
+        points(x[i, 1], y[i, 1], pch = 16, cex = 1.3, col = colors[i])
+      }
     }
 
     xval <- grconvertX(seq(0.1, 0.9, length.out = 7), from = "nfc")
