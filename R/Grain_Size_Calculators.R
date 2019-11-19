@@ -88,6 +88,10 @@ calc_sigmag <- function(ps, Ds){
 #'
 #' @return Critical stream power by grain size
 #'
+#' @importFrom utils read.table
+#' @importFrom graphics par plot
+#' @export
+#'
 calc_omega_c <- function(path, return_vals = FALSE){
 
   #Get omega_c star from model inputs
