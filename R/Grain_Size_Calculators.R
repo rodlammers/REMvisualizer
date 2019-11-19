@@ -80,3 +80,47 @@ calc_sigmag <- function(ps, Ds){
 
   return(sd)
 }
+
+#' Calculates critical stream power for the initial grain size distribution, by reach
+#'
+#' @param path Path to folder with model outputs
+#' @param return_vals Logical. If TRUE, returns calculated critical stream powers by grain size and reach
+#'
+#' @return Critical stream power by grain size
+#'
+calc_omega_c <- function(path, return_vals = FALSE){
+
+  #Get omega_c star from model inputs
+  inputs <- read.table(file.path(path, "Model Inputs.txt"), header = TRUE, sep = "\t")
+  omegac_star <- inputs$omegac_star
+  b <- inputs$b
+
+  #Get grain sizes and proportions
+  ds <- unlist(read.table(file.path(path, "Input ds.txt"), header = FALSE, sep = " "))
+  ps <- read.table(file.path(path, "Input ps.txt"), header = FALSE, sep = " ")
+
+  #Calculate D50
+  D50 <- apply(ps, 1, calc_Dx, ds, 0.5)
+
+  #Get omegac_star_adj
+  omegac_star_adj <- sapply(D50, function(x, omegac_star, ds, b){
+    omegac_star * (ds / x) ^ b
+  }, omegac_star, ds, b)
+
+  #calculate omegac (W/m2)
+  omegac <- apply(omegac_star_adj, 2, function(x, ds){
+    x * 1000 * (9.81 * 1.65 * ds) ^ 1.5
+  }, ds)
+
+  #Plot critical stream power by reach and grain size
+  ds_matrix <- matrix(rep(ds, ncol(omegac)), ncol = ncol(omegac))
+  colors <- cRamp_legend(ncol(ds_matrix), palette = "viridis")
+  par(mfrow = c(1,1), mar = c(4, 4, 1, 0.5))
+  plot(as.numeric(ds_matrix) * 1000, as.numeric(omegac), pch = 21, bg = rep(colors, each = nrow(ds_matrix)), log = "x",
+       xlab = "Grain size [mm]", ylab = "Critical Stream Power [W/m2]", las = 1)
+
+  if (return_vals){
+    return(omegac)
+  }
+
+}
