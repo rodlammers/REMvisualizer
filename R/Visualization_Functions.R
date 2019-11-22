@@ -576,6 +576,7 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 #' @param path Path to folder with model outputs
 #' @param type `type = 1` plots all lines on same plot, `type = 2` creates a
 #'   separate plot for each reach
+#' @param return_vals Logical. If TRUE, return calculated values used to make plot.
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines text grconvertX grconvertY
@@ -583,7 +584,7 @@ width_plot <- function(print = FALSE, gif = FALSE, max_plots = 10,
 #'
 #' @export
 #'
-dz_lines <- function(path = "", type = 1){
+dz_lines <- function(path = "", type = 1, return_vals = FALSE){
   bed_z <- read.table(paste0(path, "/Output z.txt"), header = FALSE, sep = "\t")
 
   #remove last bed_z column and change 0 values to NA
@@ -647,6 +648,10 @@ dz_lines <- function(path = "", type = 1){
     }
 
   }
+
+  if (return_vals){
+    return(dz)
+  }
 }
 
 #' Plots initial and final channel bed profile for each reach
@@ -654,6 +659,7 @@ dz_lines <- function(path = "", type = 1){
 #' @param path Path to folder with model outputs
 #' @param type `type = 1` plots all lines on same plot, `type = 2` creates a
 #'   separate plot for each reach
+#' @param return_vals Logical. If TRUE, return calculated values used to make plot.
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines points text
@@ -661,7 +667,7 @@ dz_lines <- function(path = "", type = 1){
 #'
 #' @export
 #'
-profiles <- function(path = "", type = 1){
+profiles <- function(path = "", type = 1, return_vals = FALSE){
   bed_z <- read.table(paste0(path, "/Output z.txt"), header = FALSE)
 
   #Change 0 values to NA
@@ -734,6 +740,9 @@ profiles <- function(path = "", type = 1){
     }
   }
 
+  if (return_vals){
+    return(list(bed_z, dx))
+  }
 
 }
 
@@ -741,13 +750,14 @@ profiles <- function(path = "", type = 1){
 #'
 #' @param path Path to folder with model outputs
 #' @param print Should the plot be printed to a file (defaults to `FALSE`)
+#' @param return_vals Logical. If TRUE, return calculated values used to make plot.
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines mtext grconvertX grconvertY
 #'
 #' @export
 #'
-width_lines <- function(path = "", print = FALSE){
+width_lines <- function(path = "", print = FALSE, return_vals = FALSE){
   width <- read.table(paste0(path, "/Output width.txt"), header = FALSE)
 
   times <- unique(width$V1)
@@ -801,6 +811,9 @@ width_lines <- function(path = "", print = FALSE){
     }
   }
 
+  if (return_vals){
+    return(width)
+  }
 }
 
 #' Plots changes in channel slope over time for all cross sections

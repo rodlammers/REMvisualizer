@@ -5,13 +5,15 @@
 \title{Plots changes over time in bed elevation for the most upstream cross section
 in each reach}
 \usage{
-dz_lines(path = "", type = 1)
+dz_lines(path = "", type = 1, return_vals = FALSE)
 }
 \arguments{
 \item{path}{Path to folder with model outputs}
 
 \item{type}{`type = 1` plots all lines on same plot, `type = 2` creates a
 separate plot for each reach}
+
+\item{return_vals}{Logical. If TRUE, return calculated values used to make plot.}
 }
 \description{
 Plots changes over time in bed elevation for the most upstream cross section

@@ -4,13 +4,15 @@
 \alias{profiles}
 \title{Plots initial and final channel bed profile for each reach}
 \usage{
-profiles(path = "", type = 1)
+profiles(path = "", type = 1, return_vals = FALSE)
 }
 \arguments{
 \item{path}{Path to folder with model outputs}
 
 \item{type}{`type = 1` plots all lines on same plot, `type = 2` creates a
 separate plot for each reach}
+
+\item{return_vals}{Logical. If TRUE, return calculated values used to make plot.}
 }
 \description{
 Plots initial and final channel bed profile for each reach

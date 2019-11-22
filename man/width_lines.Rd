@@ -4,12 +4,14 @@
 \alias{width_lines}
 \title{Plots changes in channel width over time for all cross sections}
 \usage{
-width_lines(path = "", print = FALSE)
+width_lines(path = "", print = FALSE, return_vals = FALSE)
 }
 \arguments{
 \item{path}{Path to folder with model outputs}
 
 \item{print}{Should the plot be printed to a file (defaults to `FALSE`)}
+
+\item{return_vals}{Logical. If TRUE, return calculated values used to make plot.}
 }
 \description{
 Plots changes in channel width over time for all cross sections
