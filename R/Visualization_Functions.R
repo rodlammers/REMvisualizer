@@ -1008,7 +1008,7 @@ XS_plots2 <- function(path = "", reach = 1, XS = 1){
 #'
 #' @export
 XS_plots3 <- function(path = "", XS = 1, n_plots = 0, ts = 0.2, print = FALSE){
-  output <- read.table(paste0(path, "/Output XS geometry.txt"))
+  output <- read.table(paste0(path, "/Output XS geometry all.txt"))
   n_XS <- sum(output[,1] == 0)
   times <- unique(output[,1])
   par(mfrow = c(1, 1), mar = c(2.5, 3, 1, 0.5), oma = c(1, 1.1, 0, 0))
