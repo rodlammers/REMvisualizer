@@ -620,11 +620,11 @@ dz_lines <- function(path = "", type = 1, return_vals = FALSE){
       #calculated bed elevation changes
       n_xs <- sum(!is.na(bed_z[j,2:ncol(bed_z)]))
       dz <- matrix(0, nrow = length(times), ncol = ncol(bed_z) - 1)
-      dz_list[[j]] <- dz
       initial <- bed_z[j, 2:ncol(bed_z)]
       for (i in 1:length(times)){
         dz[i,] <- as.numeric((bed_z[j + n_nodes * (i - 1), 2:ncol(bed_z)] - initial))
       }
+      dz_list[[j]] <- dz
       colors <- cRamp_legend(n_xs, "viridis")
       colors <- adjustcolor(colors, alpha.f = 0.7)
 
