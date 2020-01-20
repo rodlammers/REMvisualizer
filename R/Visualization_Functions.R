@@ -614,11 +614,13 @@ dz_lines <- function(path = "", type = 1, return_vals = FALSE){
       text(max(times), dz[nrow(dz), i], labels = i, pos = 4, xpd = NA)
     }
   }else{
+    dz_list <- list()
     par(mfrow = c(2,1), mar = c(3, 3, 0.5, 0.5), oma = c(0, 0, 0, 3))
     for (j in 1:n_nodes){
       #calculated bed elevation changes
       n_xs <- sum(!is.na(bed_z[j,2:ncol(bed_z)]))
       dz <- matrix(0, nrow = length(times), ncol = ncol(bed_z) - 1)
+      dz_list[[j]] <- dz
       initial <- bed_z[j, 2:ncol(bed_z)]
       for (i in 1:length(times)){
         dz[i,] <- as.numeric((bed_z[j + n_nodes * (i - 1), 2:ncol(bed_z)] - initial))
@@ -650,7 +652,12 @@ dz_lines <- function(path = "", type = 1, return_vals = FALSE){
   }
 
   if (return_vals){
-    return(dz)
+    if (type == 1){
+      return(dz)
+    }
+    else if (type == 2){
+      return(dz_list)
+    }
   }
 }
 
@@ -787,7 +794,7 @@ width_lines <- function(path = "", print = FALSE, return_vals = FALSE){
     row_seq <- seq(i, nrow(width), n_nodes)
     sub <- width[row_seq, ]
 
-    n_colors <- sum(!is.na(sub[1, ])) - 1
+    n_colors <- sum(!is.na(sub[1, ]))
     max_width <- max(apply(sub[, 2:(n_colors + 1)], 2, max, na.rm = TRUE))
 
     plot(NA, xlim = c(0, max(times)), ylim = c(0, max_width), las = 1,
