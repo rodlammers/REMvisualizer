@@ -826,13 +826,14 @@ width_lines <- function(path = "", print = FALSE, return_vals = FALSE){
 #' Plots changes in channel slope over time for all cross sections
 #'
 #' @param path Path to folder with model outputs
+#' @param return_vals Logical. Should plotted values be returned?
 #'
 #' @importFrom utils read.table
 #' @importFrom graphics par plot lines mtext grconvertX grconvertY
 #'
 #' @export
 #'
-slope_lines <- function(path = ""){
+slope_lines <- function(path = "", return_vals = FALSE){
   slope <- read.table(paste0(path, "/Output slope.txt"), header = FALSE)
   times <- unique(slope$V1)
   slope_XS <- data_by_XS(slope)
@@ -863,6 +864,7 @@ slope_lines <- function(path = ""){
     }
   }
 
+  return(slope_XS)
 }
 
 #' Plots initial and final cross section geometry for the most upstream cross
